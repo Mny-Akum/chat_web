@@ -1,4 +1,5 @@
 # chat_app
+使用vue搭建一个聊天室
 
 ## Project setup
 ```
