@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-import axios from 'axios';
+import {dbUtil,ChatDB} from "@/utils/chatDB";
 let socket;
 import suspensionBall from './suspension.vue';
 export default {
@@ -48,6 +48,7 @@ export default {
   },
   data() {
     return {
+      chatDB:null,
       ip: "",
       sendMessage: "",
       chatUser: {
@@ -67,12 +68,12 @@ export default {
     document.title = "聊天室"
     this.username = this.$route.params.email
     this.ip = localStorage.getItem("ip")
+    this.chatDB = new ChatDB("chat","chatMessage");
     if (!this.username) {
       this.$message({ type: "warning", message: "暂未登录，请重新登录" })
       this.$router.push("/login")
     }
     this.init()
-    this.note()
   },
   computed: {
     //是否显示时间
@@ -89,7 +90,7 @@ export default {
       webList.forEach(item => {
         onlineUser.add(item.username)
       })
-      axios.get("/chat/user/list").then(res => {
+      this.$axios.get("/chat/user/list").then(res => {
         let arr = res.data.data
         let reLogin = false;
         let map = {};
@@ -184,9 +185,6 @@ export default {
         socket.send(JSON.stringify(message));
         let h = new Date();
         let time = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, 0)}-${String(h.getDate()).padStart(2, 0)} ${String(h.getHours()).padStart(2, 0)}:${String(h.getMinutes()).padStart(2, 0)}`
-        // let nowTime = new Date().getTime()/1000
-        // let showTime = nowTime - this.justTime[to]?this.justTime[to]:0 > 1200
-        // this.justTime[to] = nowTime
         if (!this.messageList[to]) {
           let map = { ...this.messageList }
           map[to] = [{ from: this.username, time, message: this.sendMessage, showTime, type: message.type }]
@@ -197,6 +195,9 @@ export default {
         this.sendMessage = '';
       }
       this.scrollFun("send")
+    },
+    messageStoreToDB(){
+
     },
     //初始化，进行websocket的链接
     init() {
@@ -217,17 +218,18 @@ export default {
         };
         //  浏览器端收消息，获得从服务端发送过来的文本消息
         socket.onmessage = (msg) => {
-          var data = JSON.parse(msg.data);
+          //消息数据
+          let data = JSON.parse(msg.data);
+          //区分是系统消息还是用户消息
+          /**
+           * 系统消息：更新人数，更新列表，进行邮箱和用户名的映射
+           * 用户消息：添加到数组中，首先要查看数组中是否存在
+           */
           if (data.type == "system") {
             this.getUserList(data.users)
             this.userCount = data.count
           } else {
-            //获取当前时间，用于时间显示
-            // let nowTime = new Date().getTime()/1000
-            // this.justTime = nowTime
             if (data.type == "group") {
-              let showTime = this.showTime('group');
-              // data['showTime'] = showTime
               if (!this.messageList.group) {
                 let map = { ...this.messageList }
                 map.group = [data]
@@ -236,8 +238,6 @@ export default {
                 this.messageList.group.push(data)
               }
             } else {
-              let showTime = this.showTime(data.from);
-              // data['showTime'] = showTime
               if (!this.messageList[data.from]) {
                 let map = { ...this.messageList }
                 map[data.from] = [data]
@@ -256,51 +256,6 @@ export default {
         socket.onerror = function () {
         }
       }
-    },
-    note() {
-      (function () {
-        var a_idx = 0;
-        window.onclick = function (event) {
-          var a = new Array("Tomorin","Ano酱","圣青木","Soyorin","Rikki");
-
-          var heart = document.createElement("b"); //创建b元素
-          heart.onselectstart = new Function('event.returnValue=false'); //防止拖动
-
-          document.body.appendChild(heart).innerHTML = a[a_idx]; //将b元素添加到页面上
-          a_idx = (a_idx + 1) % a.length;
-          heart.style.cssText = "position: fixed;left:-100%;"; //给p元素设置样式
-
-          var f = 10, // 字体大小
-            x = event.clientX - f / 2, // 横坐标
-            y = event.clientY - f, // 纵坐标
-            c = randomColor(), // 随机颜色
-            a = 1, // 透明度
-            s = 1.2; // 放大缩小
-
-          var timer = setInterval(function () { //添加定时器
-            if (a <= 0) {
-              document.body.removeChild(heart);
-              clearInterval(timer);
-            } else {
-              heart.style.cssText = "font-size:10px;cursor: default;position: fixed;color:" +
-                c + ";left:" + x + "px;top:" + y + "px;opacity:" + a + ";transform:scale(" +
-                s + ");";
-
-              y--;
-              a -= 0.016;
-              s += 0.002;
-            }
-          }, 15)
-
-        }
-        // 随机颜色
-        function randomColor() {
-
-          return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math
-            .random() * 255)) + ")";
-
-        }
-      }());
     }
 
   }

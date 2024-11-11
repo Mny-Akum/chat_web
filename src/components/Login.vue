@@ -50,7 +50,7 @@
     </div>
 </template>
 <script>
-import axios from 'axios';
+// import this.$axios from 'this.$axios';
 export default {
     data() {
         return {
@@ -59,7 +59,7 @@ export default {
             username: "",
             password: "",
             showDialog: false,
-            ip: '127.0.0.1:5000',
+            ip: '172.18.4.118:5000',
             isSave: false,
             autoLogin: false
         }
@@ -82,7 +82,7 @@ export default {
                 });
                 this.ip = value
                 localStorage.setItem("ip", value)
-                axios.defaults.baseURL = 'http://' + this.ip
+                this.$axios.defaults.baseURL = 'http://' + this.ip
             }).catch(() => {
                 this.$message({
                     type: 'info',
@@ -106,7 +106,7 @@ export default {
             if (!this.check()) {
                 return
             }
-            axios.post('/chat/user/login', {
+            this.$axios.post('/chat/user/login', {
                 email: this.email,
                 password: this.password
             }).then(res => {
@@ -134,7 +134,7 @@ export default {
             if (!this.check()) {
                 return
             }
-            axios.post('/chat/user/register', {
+            this.$axios.post('/chat/user/register', {
                 email: this.email,
                 password: this.password,
                 username: this.username
@@ -174,8 +174,8 @@ export default {
             document.documentElement.style.fontSize = document.documentElement.clientHeight / 1080 * 12 + 'px'
             this.ip = (this.ip ? this.ip : localStorage.getItem('ip'))
             localStorage.setItem('ip', this.ip)
-            axios.defaults.baseURL = 'http://' + this.ip
-            axios.defaults.headers.post['Content-Type'] = 'application/json'
+            this.$axios.defaults.baseURL = 'http://' + this.ip
+            this.$axios.defaults.headers.post['Content-Type'] = 'application/json'
         },
         mountedInit() {
             let switchBtnArr = document.getElementsByClassName("el-switch__label");

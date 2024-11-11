@@ -4,6 +4,7 @@
   </div>
 </template>
 <script>
+import clickEffect from "@/utils/clickEffect"
 export default {
   data() {
     return {
@@ -11,6 +12,7 @@ export default {
     }
   },
   mounted() {
+    clickEffect.note()
     this.$router.push("/login")
   },
   methods: {
