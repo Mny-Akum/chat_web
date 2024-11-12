@@ -45,10 +45,10 @@ const dbUtil = {
                     keyPath:"id",
                     autoIncrement:true
                 })
-                messageStore.createIndex("from_user","from_user",{unique:false});
-                messageStore.createIndex("to_user","to_user",{unique:false});
-                messageStore.createIndex("text","text",{unique:false});
-                messageStore.createIndex("send_time","send_time",{unique:false});
+                messageStore.createIndex("from_user","from",{unique:false});
+                messageStore.createIndex("to_user","to",{unique:false});
+                messageStore.createIndex("text","message",{unique:false});
+                messageStore.createIndex("send_time","time",{unique:false});
                 messageStore.createIndex("type","type",{unique:false});
             }
         })

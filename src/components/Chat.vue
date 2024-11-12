@@ -19,7 +19,7 @@
         <div id="chatHeader">{{ chatUser.username }}</div>
         <el-main id="chatBody">
           <div v-for="(item, index) in messageList[chatUser.email]" :key="index">
-            <div style="text-align:center;margin:2rem 0 " v-if="item.showTime">{{ item.time }}</div>
+            <div class="time" v-if="item.showTime">{{ item.time }}</div>
             <div :class="item.from == username ? 'comment-box-we' : 'comment-box-other'">
               <div class="comment-username" v-if="item.type == 'group'">{{ emailMap[item.from] }}</div>
               <div class="comment-container">
@@ -57,7 +57,9 @@ export default {
       },
       userlist: [],
       emailMap: {},
-      messageList: {},
+      messageList: {
+        page:{}
+      },
       username: "",
       isCollapse: false,
       userCount: 0,
@@ -69,6 +71,7 @@ export default {
     this.username = this.$route.params.email
     this.ip = localStorage.getItem("ip")
     this.chatDB = new ChatDB("chat","chatMessage");
+    this.getStoreData();
     if (!this.username) {
       this.$message({ type: "warning", message: "暂未登录，请重新登录" })
       this.$router.push("/login")
@@ -76,10 +79,94 @@ export default {
     this.init()
   },
   computed: {
-    //是否显示时间
 
   },
   methods: {
+    //初始化，进行websocket的链接
+    /**
+     * 开启一个websocket服务，连接成功触发打开事件
+     * 1.onmessage 浏览器端收消息，获得从服务端发送过来的文本消息
+     *  data 消息数据，对data进行判断区分是系统消息还是用户消息
+     *    (1)系统消息：更新人数，更新列表，进行邮箱和用户名的映射
+     *    (2)用户消息：添加到数组中，首先要查看数组中是否存在，然后分为两种不同的走向
+     *  最后触发scrollFun()事件，让条滚到底部
+     */
+    init() {
+      if (typeof (WebSocket) == "undefined") {
+        console.log("您的浏览器不支持WebSocket");
+      } else {
+        console.log("您的浏览器支持WebSocket");
+        let socketUrl = "ws://" + this.ip + "/chat/server/" + this.username;
+        if (socket != null) {
+          socket.close();
+          socket = null;
+        }
+        socket = new WebSocket(socketUrl);
+        socket.onopen = function () {
+          console.log("websocket已打开");
+        };
+        socket.onmessage = (msg) => {
+          let data = JSON.parse(msg.data);
+          if (data.type == "system") {
+            this.getUserList(data.users)
+            this.userCount = data.count
+          } else {
+            if(data.type == "group"){
+              this.addMessageList(data.to,data)
+            }else{
+              this.addMessageList(data.from,data)
+            }
+            this.scrollFun()
+          }
+        };
+        //关闭事件
+        socket.onclose = function () {
+        };
+        //发生了错误事件
+        socket.onerror = function () {
+        }
+      }
+    },
+    //发送消息
+    send() {
+      if (!this.chatUser.email) {
+        this.$message({ type: 'warning', message: "请选择聊天对象" })
+        return;
+      }
+      if (!this.sendMessage) {
+        this.$message({ type: 'warning', message: "请输入内容" })
+        return;
+      }
+      if (typeof (WebSocket) == "undefined") {
+        console.log("您的浏览器不支持WebSocket");
+      } else {
+        let message;
+        let to;
+        if (this.chatUser.email == "group") {
+          to = "group"
+          message = {
+            type: "group",
+            to:"group",
+            message: this.sendMessage
+          }
+        } else {
+          to = this.chatUser.email
+          message = {
+            type: "single",
+            to: this.chatUser.email,
+            message: this.sendMessage
+          }
+        }
+        let showTime = this.showTime(to);
+        socket.send(JSON.stringify(message));
+        let h = new Date();
+        let time = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, 0)}-${String(h.getDate()).padStart(2, 0)} ${String(h.getHours()).padStart(2, 0)}:${String(h.getMinutes()).padStart(2, 0)}`
+        let send_data = { from: this.username,to, message: this.sendMessage,time, type: message.type,showTime};
+        this.addMessageList(to,send_data)
+        this.sendMessage = '';
+      }
+      this.scrollFun("send")
+    },
     /**
      * ["username","username"]
      * [{username,email,isLogin},{},{}]
@@ -105,10 +192,61 @@ export default {
         if (!reLogin) {
           this.$router.replace("/login")
         }
-        //邮箱映射表
         this.emailMap = map
         this.userlist = arr
       })
+    },
+    //数据持久化，将消息储存到本地
+    messageStoreToDB(data){
+      this.chatDB.insertData(data)
+    },
+    //进行初始化
+    getStoreData(){
+      this.chatDB.selectData("to_user","group").then(data=>{
+        this.addMessageList("group",data.list)
+      })
+    },
+    //是否显示时间
+    showTime(name) {
+      let nowTime = new Date().getTime() / 1000
+      let bool = (nowTime - (this.justTime[name] ? this.justTime[name] : 0) > 1200)
+      this.$set(this.justTime,name,nowTime)
+      return bool
+    },
+    //选择用户
+    choiceUser(item) {
+      this.sendMessage = ""
+      if (item) {
+        this.chatUser = { username: item.username, email: item.email }
+      } else {
+        this.chatUser = { username: "群组聊天", email: "group" }
+      }
+    },
+    //将消息添加到对象列表中
+    addMessageList(key,value){
+      //判断是否是消息列表
+      if(value instanceof Array){
+        if(this.messageList[key]){
+          this.messageList[key].push(value)
+          this.messageList.page[key].count += value.length
+          this.messageList.page[key].page++ 
+        }else{
+          this.$set(this.messageList,key,value)
+          this.messageList.page[key] = {count:value.length,page:1}
+        }
+        return
+      }else{
+        if(this.messageList[key]){
+          this.messageList[key].push(value)
+          this.messageList.page[key].count++
+        }else{
+          this.$set(this.messageList,key,[value])
+          this.messageList.page[key] = {count:1,page:1}
+        }
+        this.messageStoreToDB(value)
+      }
+      
+      console.log(this.messageList)
     },
     //发送消息直接到底部
     scrollFun(type) {
@@ -134,130 +272,6 @@ export default {
         this.send()
       }
     },
-    //是否显示时间
-    showTime(name) {
-      let obj = { ...this.justTime }
-      let nowTime = new Date().getTime() / 1000
-      let bool = (nowTime - (this.justTime[name] ? this.justTime[name] : 0) > 1200)
-      obj[name] = nowTime
-      this.justTime = obj
-      return bool
-    },
-    //选择用户
-    choiceUser(item) {
-      this.sendMessage = ""
-      if (item) {
-        this.chatUser = { username: item.username, email: item.email }
-      } else {
-        this.chatUser = { username: "群组聊天", email: "group" }
-      }
-    },
-    //发送消息
-    send() {
-      if (!this.chatUser.email) {
-        this.$message({ type: 'warning', message: "请选择聊天对象" })
-        return;
-      }
-      if (!this.sendMessage) {
-        this.$message({ type: 'warning', message: "请输入内容" })
-        return;
-      }
-      if (typeof (WebSocket) == "undefined") {
-        console.log("您的浏览器不支持WebSocket");
-      } else {
-        let message;
-        let to;
-        if (this.chatUser.email == "group") {
-          to = "group"
-          message = {
-            type: "group",
-            message: this.sendMessage
-          }
-        } else {
-          to = this.chatUser.email
-          message = {
-            type: "single",
-            to: this.chatUser.email,
-            message: this.sendMessage
-          }
-        }
-        let showTime = this.showTime(to);
-        socket.send(JSON.stringify(message));
-        let h = new Date();
-        let time = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, 0)}-${String(h.getDate()).padStart(2, 0)} ${String(h.getHours()).padStart(2, 0)}:${String(h.getMinutes()).padStart(2, 0)}`
-        if (!this.messageList[to]) {
-          let map = { ...this.messageList }
-          map[to] = [{ from: this.username, time, message: this.sendMessage, showTime, type: message.type }]
-          this.messageList = map
-        } else {
-          this.messageList[to].push({ from: this.username, time, message: this.sendMessage, showTime, type: message.type })
-        }
-        this.sendMessage = '';
-      }
-      this.scrollFun("send")
-    },
-    messageStoreToDB(){
-
-    },
-    //初始化，进行websocket的链接
-    init() {
-      if (typeof (WebSocket) == "undefined") {
-        console.log("您的浏览器不支持WebSocket");
-      } else {
-        console.log("您的浏览器支持WebSocket");
-        let socketUrl = "ws://" + this.ip + "/chat/server/" + this.username;
-        if (socket != null) {
-          socket.close();
-          socket = null;
-        }
-        // 开启一个websocket服务
-        socket = new WebSocket(socketUrl);
-        //打开事件
-        socket.onopen = function () {
-          console.log("websocket已打开");
-        };
-        //  浏览器端收消息，获得从服务端发送过来的文本消息
-        socket.onmessage = (msg) => {
-          //消息数据
-          let data = JSON.parse(msg.data);
-          //区分是系统消息还是用户消息
-          /**
-           * 系统消息：更新人数，更新列表，进行邮箱和用户名的映射
-           * 用户消息：添加到数组中，首先要查看数组中是否存在
-           */
-          if (data.type == "system") {
-            this.getUserList(data.users)
-            this.userCount = data.count
-          } else {
-            if (data.type == "group") {
-              if (!this.messageList.group) {
-                let map = { ...this.messageList }
-                map.group = [data]
-                this.messageList = map
-              } else {
-                this.messageList.group.push(data)
-              }
-            } else {
-              if (!this.messageList[data.from]) {
-                let map = { ...this.messageList }
-                map[data.from] = [data]
-                this.messageList = map
-              } else {
-                this.messageList[data.from].push(data)
-              }
-            }
-            this.scrollFun()
-          }
-        };
-        //关闭事件
-        socket.onclose = function () {
-        };
-        //发生了错误事件
-        socket.onerror = function () {
-        }
-      }
-    }
-
   }
 }
 </script>
@@ -276,7 +290,8 @@ export default {
 
 #box {
   /* background: linear-gradient(215deg, #fdaeae, #ffe6c6); */
-  background-image: url(../assets/images/01.jpg);
+  background-image: url(../assets/images/mygo.jpg);
+  background-position-x: 10vw;
   background-size: cover;
   display: flex;
   height: 100vh;
@@ -363,6 +378,12 @@ ul {
   margin-top: 1vh;
   margin-bottom: 1vh;
   overflow-x: hidden;
+}
+
+#chatBody .time{
+  text-align:center;
+  margin:2rem 0 ;
+  color: white;
 }
 
 .comment-container {

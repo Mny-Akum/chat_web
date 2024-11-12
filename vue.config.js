@@ -7,5 +7,11 @@ module.exports = defineConfig({
       args[0].title="欢迎来到App外包工坊";
       return args;
     })
-  }
+  },
+  // devServer:{
+  //   open:true,
+  //   host:'0.0.0.0',
+  //   port:8000,
+  //   https:true
+  // }
 })

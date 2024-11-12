@@ -59,7 +59,7 @@ export default {
             username: "",
             password: "",
             showDialog: false,
-            ip: '172.18.4.118:5000',
+            ip: '',
             isSave: false,
             autoLogin: false
         }
