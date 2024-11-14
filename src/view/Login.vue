@@ -15,10 +15,8 @@
                         <input class="acc" type="text" v-model="email" placeholder="邮箱">
                         <input class="acc" type="password" v-model="password" placeholder="密码" maxlength="20">
                         <div class="switches">
-                            <el-switch v-model="isSave" inactive-color="#e0c3fc" active-color="#8ec5fc"
-                                active-text="记住密码" />
-                            <el-switch v-model="autoLogin" inactive-color="#e0c3fc" active-color="#8ec5fc"
-                                active-text="自动登录" />
+                            <el-switch v-model="isSave" inactive-color="#e0c3fc" active-color="#8ec5fc" active-text="记住密码" class="switchStyle" />
+                            <el-switch v-model="autoLogin" inactive-color="#e0c3fc" active-color="#8ec5fc" active-text="自动登录" class="switchStyle" />
                         </div>
                         <button class="submit" style="margin: 3rem auto 0;" @click="chatLogin">登录账号</button>
                     </div>
@@ -195,7 +193,7 @@ export default {
                 this.password = user.password
             }
             if (this.autoLogin) {
-                this.login()
+                this.chatLogin()
             }
         }
     },
@@ -229,7 +227,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 * {
     margin: 0;
     padding: 0;

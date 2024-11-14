@@ -341,13 +341,13 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less">
 * {
   margin: 0px;
   padding: 0px;
 }
 
-.mian {
+.main {
   width: 100%;
   height: 100%;
   /* background-image: url('../assets/images/01.jpg'); */
@@ -467,12 +467,6 @@ ul {
   display: flex;
   margin-top: 2rem;
 }
-.comment-box-we{
-  flex-direction: row-reverse;
-}
-.comment-box-other{
-
-}
 
 /* 聊天头像框样式 */
 /*
@@ -485,35 +479,18 @@ ul {
   border-radius: 50%;
   flex-shrink: 0
 }
-.comment-box-we .comment_avator{
-  margin-left: 1rem;
-}
-.comment-box-other .comment_avator{
-  margin-right: 1rem;
-}
-.single_comment .comment_avator{
-  margin-top: 0rem;
-}
-/* 
 
+/* 
     用户名和消息外面的盒子，用于分割头像
     宽度无所谓，占用剩余空间 flex-grow
-
 */
 .comment_username_message{
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
-.comment-box-other .comment_username_message{
-  align-items: flex-start;
-  
-}
-.comment-box-we .comment_username_message{
-  align-items: flex-end;
-}
-/* 消息上面的用户名样式 */
 
+/* 消息上面的用户名样式 */
 .comment-username {
   padding: 0.4rem;
   /* 添加底部外边距以分隔评论数据和评论内容 */
@@ -525,16 +502,7 @@ ul {
   /* margin-left: 280px; */
 }
 
-.comment-box-other .comment-username {
-  text-align: left;
-}
-
-.comment-box-we .comment-username {
-  text-align: right;
-}
-
 /* 聊天消息样式 */
-
 .comment {
   border-radius: 0.5rem;
   padding: 1rem;
@@ -548,21 +516,8 @@ ul {
   display: inline-block;
   position: relative;
 }
-.single_comment .comment{
-  margin-top:1.1rem;
-}
-
-.comment-box-other .comment {
-  background: #f89999;
-}
-
-/* 我方发送消息时的气泡效果 部分 */
-.comment-box-we .comment {
-  background: #8ec5fc;
-}
 
 /* 对话框小尾巴 */
-
 .comment:after {
   content: '';
   width: 0;
@@ -575,13 +530,75 @@ ul {
   font-size: 0;
 }
 
-.comment-box-other .comment:after {
-  left: -1.4rem;
-  border-color: transparent #f89999 transparent transparent;
+.comment-box-we{
+  flex-direction: row-reverse;
+  .comment_avator{
+    margin-left: 1rem;
+  }
+  .comment_username_message{
+    align-items: flex-end;
+  }
+  .comment-username {
+    text-align: right;
+  }
+  .comment {
+    background: #8ec5fc;
+  }
+  .comment:after {
+    right: -1.4rem;
+    border-color: transparent transparent transparent #8ec5fc;
+  }
 }
 
-.comment-box-we .comment:after {
-  right: -1.4rem;
-  border-color: transparent transparent transparent #8ec5fc;
+.comment-box-other{
+  .comment_avator{
+    margin-right: 1rem;
+  }
+  .comment_username_message{
+    align-items: flex-start;
+  }
+  .comment-username {
+    text-align: left;
+  }
+  .comment {
+    background: #f89999;
+  }
+  .comment:after {
+    left: -1.4rem;
+    border-color: transparent #f89999 transparent transparent;
+  }
+}
+
+.single_comment {
+  .comment_avator{
+    margin-top: 0rem;
+  }
+  .comment{
+    margin-top:1.1rem;
+  }
+}
+
+
+#chatBody {
+  
+  // color: #8ec5fc
+  
+}
+@supports (scrollbar-color: auto) {
+  #chatBody{
+      scrollbar-color: rgba(0,0,0,0) rgba(255, 154, 150, 0);
+      transition: scrollbar-color 0.2s linear;
+  }
+  #chatBody:hover{
+    scrollbar-color: rgb(124, 213, 255) rgba(255, 136, 136, 0);
+  }
+}
+@keyframes animateBg{
+    0%{
+        filter: hue-rotate(0deg);
+    }
+    100%{
+        filter: hue-rotate(360deg);
+    }
 }
 </style>
