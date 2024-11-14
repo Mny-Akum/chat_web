@@ -30,9 +30,9 @@
                 'comment-box-we': item.from == username,
                 'comment-box-other':item.from != username}"
             >
-              <el-avatar class="comment_avator" src="https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa" />
+              <el-avatar class="comment_avatar" :src="getUserAvatar(item.from)" />
               <div class="comment_username_message">
-                <div class="comment-username" v-if="item.type == 'group'">{{ emailMap[item.from] }}</div>
+                <div class="comment-username" v-if="item.type == 'group'">{{ getUsername(item.from) }}</div>
                 <div class="comment" v-html="item.message"></div>
               </div>
             </div>
@@ -53,6 +53,7 @@ let socket;
 import suspensionBall from '../components/suspension.vue';
 import {getUserList,getMessageList} from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
+import {getRandomNum} from '@/utils/utils'
 export default {
   name: 'app',
   components: {
@@ -197,12 +198,16 @@ export default {
       webList.forEach(item => {
         onlineUser.add(item.username)
       })
-      getUserList().then(res => {
+      getUserList()
+      .then(res => {
         let arr = res.data.data
         let map = {};
         arr.forEach((item) => {
           delete item.password
-          map[item.email] = item.username
+          map[item.email] = {
+            username:item.username,
+            avatar:item.avatar
+          }
           item.online = onlineUser.has(item.email)
         })
         this.emailMap = map
@@ -212,6 +217,18 @@ export default {
           this.$message({ type: "warning", message: "验证过期，请重新登录" })
           this.$router.replace("/login")
       });
+    },
+    //通过email获取头像
+    getUserAvatar(email){
+      let avatar = this.emailMap[email]?.avatar ? this.emailMap[email].avatar : 'https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa'
+      return avatar
+    },
+    //通过email获取名字
+    getUsername(email){
+      console.log(email)
+      let username = this.emailMap[email]?.username;
+      username = username ? username:'御坂'+getRandomNum(10000,20000)+'号';
+      return username
     },
     //是否显示时间
     showTime(name) {
@@ -248,7 +265,6 @@ export default {
         }
       }
       this.scrollFun()
-      
     },
     /**
      *  发送消息直接到底部
@@ -369,7 +385,7 @@ export default {
   padding: 2.5rem;
   font-size: 1.2rem;
   /* 亚卡力效果 */
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.85rem);
 }
 
 #left ul li {
@@ -472,7 +488,7 @@ ul {
 /*
   flex-shrink 禁止被压缩
 */
-.comment_avator{
+.comment_avatar{
   margin-top: 1.2rem;
   height: 4rem;
   width: 4rem;
@@ -510,6 +526,7 @@ ul {
   white-space: pre-wrap;
   /* 保留换行符 */
   word-wrap: break-word;
+  word-break: break-all;
   /* 防止长单词或URL破坏布局 */
   font-size: 1.2rem;
   max-width: 80%;
@@ -532,7 +549,7 @@ ul {
 
 .comment-box-we{
   flex-direction: row-reverse;
-  .comment_avator{
+  .comment_avatar{
     margin-left: 1rem;
   }
   .comment_username_message{
@@ -551,7 +568,7 @@ ul {
 }
 
 .comment-box-other{
-  .comment_avator{
+  .comment_avatar{
     margin-right: 1rem;
   }
   .comment_username_message{
@@ -570,7 +587,7 @@ ul {
 }
 
 .single_comment {
-  .comment_avator{
+  .comment_avatar{
     margin-top: 0rem;
   }
   .comment{
@@ -592,13 +609,5 @@ ul {
   #chatBody:hover{
     scrollbar-color: rgb(124, 213, 255) rgba(255, 136, 136, 0);
   }
-}
-@keyframes animateBg{
-    0%{
-        filter: hue-rotate(0deg);
-    }
-    100%{
-        filter: hue-rotate(360deg);
-    }
 }
 </style>
