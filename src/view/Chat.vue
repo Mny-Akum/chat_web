@@ -2,7 +2,7 @@
   <div class="main">
     <div id="box">
       <div class="app">
-        <suspensionBall />
+        <MyCat />
       </div>
       <main id="left">
         <ul>
@@ -21,16 +21,16 @@
         <div id="chatHeader">{{ chatUser.username }}</div>
         <!-- 消息列表 -->
         <el-main id="chatBody" ref="chatBody" @onscroll="messageLazyLoad">
-          <chat-loading :isLoading="messageList.isLoading" text="消息正在赶来喵~"/>
+          <chat-loading :isLoading="messageList.isLoading" text="消息正在赶来喵~" />
           <div v-for="(item, index) in messageList[chatUser.email]" :key="index">
             <div class="time" v-if="item.showTime">{{ item.time }}</div>
-            <div class="comment_box" 
-              :class="{
-                'single_comment': item.type != 'group',
-                'comment-box-we': item.from == username,
-                'comment-box-other':item.from != username}"
-            >
-              <el-avatar class="comment_avator" src="https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa" />
+            <div class="comment_box" :class="{
+              'single_comment': item.type != 'group',
+              'comment-box-we': item.from == username,
+              'comment-box-other': item.from != username
+            }">
+              <el-avatar class="comment_avator"
+                src="https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa" />
               <div class="comment_username_message">
                 <div class="comment-username" v-if="item.type == 'group'">{{ emailMap[item.from] }}</div>
                 <div class="comment" v-html="item.message"></div>
@@ -50,13 +50,13 @@
 </template>
 <script>
 let socket;
-import suspensionBall from '../components/suspension.vue';
-import {getUserList,getMessageList} from '@/api/api'
+import MyCat from '@/components/MyCat.vue';
+import { getUserList, getMessageList } from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
 export default {
   name: 'app',
   components: {
-    suspensionBall,
+    MyCat,
     ChatLoading
   },
   data() {
@@ -67,8 +67,8 @@ export default {
       userlist: [],
       emailMap: {},
       messageList: {
-        isLoading:false,
-        page:{}
+        isLoading: false,
+        page: {}
       },
       username: "",
       isCollapse: false,
@@ -76,16 +76,16 @@ export default {
       justTime: {}
     }
   },
-  watch:{
-    chatUser:{
-      deep:true,
-      handler({email,username,type}){
+  watch: {
+    chatUser: {
+      deep: true,
+      handler({ email, username, type }) {
         this.getStoreMessage({
-          to:email,
-          from:this.username,
+          to: email,
+          from: this.username,
           type,
-          startNum:this.messageList.page[email]?this.messageList.page[email].count:0,
-          pageSize:10
+          startNum: this.messageList.page[email] ? this.messageList.page[email].count : 0,
+          pageSize: 10
         })
         this.scrollFun("send")
       }
@@ -94,9 +94,9 @@ export default {
   mounted() {
     document.title = "聊天室"
     this.username = this.$route.params.email
-    this.$refs.chatBody.$el.addEventListener('scroll',this.messageLazyLoad)
+    this.$refs.chatBody.$el.addEventListener('scroll', this.messageLazyLoad)
     this.ip = localStorage.getItem("ip")
-    this.chatUser = {username: "群组聊天", email: "group",type:"group"};
+    this.chatUser = { username: "群组聊天", email: "group", type: "group" };
     this.init()
   },
   computed: {
@@ -117,7 +117,7 @@ export default {
         console.log("您的浏览器不支持WebSocket");
       } else {
         console.log("您的浏览器支持WebSocket");
-        let socketUrl = "ws://" + this.ip + "/chat/server/" + this.username +'?token='+localStorage.getItem("token");
+        let socketUrl = "ws://" + this.ip + "/chat/server/" + this.username + '?token=' + localStorage.getItem("token");
         if (socket != null) {
           socket.close();
           socket = null;
@@ -132,10 +132,10 @@ export default {
             this.getUserList(data.users)
             this.userCount = data.count
           } else {
-            if(data.type == "group"){
-              this.addMessageList(data.to,data)
-            }else{
-              this.addMessageList(data.from,data)
+            if (data.type == "group") {
+              this.addMessageList(data.to, data)
+            } else {
+              this.addMessageList(data.from, data)
             }
           }
         };
@@ -166,7 +166,7 @@ export default {
           to = "group"
           message = {
             type: "group",
-            to:"group",
+            to: "group",
             message: this.sendMessage
           }
         } else {
@@ -181,8 +181,8 @@ export default {
         socket.send(JSON.stringify(message));
         let h = new Date();
         let time = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, 0)}-${String(h.getDate()).padStart(2, 0)} ${String(h.getHours()).padStart(2, 0)}:${String(h.getMinutes()).padStart(2, 0)}`
-        let send_data = { from: this.username,to, message: this.sendMessage,time, type: message.type,showTime};
-        this.addMessageList(to,send_data)
+        let send_data = { from: this.username, to, message: this.sendMessage, time, type: message.type, showTime };
+        this.addMessageList(to, send_data)
         this.sendMessage = '';
       }
       this.scrollFun("send")
@@ -207,48 +207,48 @@ export default {
         })
         this.emailMap = map
         this.userlist = arr
-      }).catch(error=>{
-          localStorage.setItem("autoLogin",false);
-          this.$message({ type: "warning", message: "验证过期，请重新登录" })
-          this.$router.replace("/login")
+      }).catch(error => {
+        localStorage.setItem("autoLogin", false);
+        this.$message({ type: "warning", message: "验证过期，请重新登录" })
+        this.$router.replace("/login")
       });
     },
     //是否显示时间
     showTime(name) {
       let nowTime = new Date().getTime() / 1000
       let bool = (nowTime - (this.justTime[name] ? this.justTime[name] : 0) > 1200)
-      this.$set(this.justTime,name,nowTime)
+      this.$set(this.justTime, name, nowTime)
       return bool
     },
     //选择用户
     choiceUser(item) {
       this.sendMessage = ""
       if (item) {
-        this.chatUser = { username: item.username, email: item.email,type:'single'}
+        this.chatUser = { username: item.username, email: item.email, type: 'single' }
       } else {
-        this.chatUser = { username: "群组聊天", email: "group",type:'group'}
+        this.chatUser = { username: "群组聊天", email: "group", type: 'group' }
       }
     },
     //将消息添加到对象列表中
-    addMessageList(key,value,desc){
+    addMessageList(key, value, desc) {
       //判断是否是倒序插入
-      if(desc){
-        if(this.messageList[key]){
+      if (desc) {
+        if (this.messageList[key]) {
           this.messageList[key].unshift(value)
           this.messageList.page[key].count++
-        }else{
-          this.$set(this.messageList,key,[value])
+        } else {
+          this.$set(this.messageList, key, [value])
         }
-      }else{
-        if(this.messageList[key]){
+      } else {
+        if (this.messageList[key]) {
           this.messageList[key].push(value)
           this.messageList.page[key].count++
-        }else{
-          this.$set(this.messageList,key,[value])
+        } else {
+          this.$set(this.messageList, key, [value])
         }
       }
       this.scrollFun()
-      
+
     },
     /**
      *  发送消息直接到底部
@@ -267,10 +267,10 @@ export default {
         this.$nextTick(() => {
           chatBody.scrollBy(0, chatBody.scrollHeight)
         })
-      }else if(type == "request"){
+      } else if (type == "request") {
         this.$nextTick(() => {
           let scrollHeight2 = chatBody.scrollHeight
-          chatBody.scrollBy(0, scrollHeight2-scrollHeight1)
+          chatBody.scrollBy(0, scrollHeight2 - scrollHeight1)
         })
       } else {
         this.$nextTick(() => {
@@ -283,18 +283,18 @@ export default {
     },
     //消息懒加载，滚到顶部加载更多
     //isLoading 防止多次请求
-    messageLazyLoad(){
+    messageLazyLoad() {
       let top = chatBody.scrollTop;
       let scrollHeight = chatBody.scrollHeight;
       let height = chatBody.clientHeight;
-      if(top < 1 && !this.messageList.isLoading && scrollHeight != height){
-        let {email,type} = this.chatUser;
+      if (top < 1 && !this.messageList.isLoading && scrollHeight != height) {
+        let { email, type } = this.chatUser;
         this.getStoreMessage({
-          to:email,
-          from:this.username,
+          to: email,
+          from: this.username,
           type,
-          startNum:this.messageList.page[email]?this.messageList.page[email].count:0,
-          pageSize:10
+          startNum: this.messageList.page[email] ? this.messageList.page[email].count : 0,
+          pageSize: 10
         })
       }
     },
@@ -304,38 +304,38 @@ export default {
         this.send()
       }
     },
-    getStoreMessage(params){
+    getStoreMessage(params) {
       //判断是否应该扩容，没有该对象，或者还有更多就进行扩容
-      if(!this.messageList.page[params.to] || this.messageList.page[params.to].isMore){
+      if (!this.messageList.page[params.to] || this.messageList.page[params.to].isMore) {
         this.messageList.isLoading = true;
-        getMessageList(params).then(res=>{
+        getMessageList(params).then(res => {
           let obj = res.data.data;
           let messageList = obj.messageList;
           //进行一次初始化
-          if(!this.messageList.page[obj.to]){
-            this.messageList.page[obj.to] = {count:1,isMore:obj.count==obj.pageSize}
-          }else{
+          if (!this.messageList.page[obj.to]) {
+            this.messageList.page[obj.to] = { count: 1, isMore: obj.count == obj.pageSize }
+          } else {
             this.messageList.page[obj.to].isMore = (obj.count == obj.pageSize)
           }
-          
-          messageList.forEach(item=>{
+
+          messageList.forEach(item => {
             let timeSplit = item.send_time.split('T')
-            let time = `${timeSplit[0]} ${timeSplit[1].substr(0,5)}`
+            let time = `${timeSplit[0]} ${timeSplit[1].substr(0, 5)}`
             let message = {
-              from:item.from_user,
-              message:item.message,
+              from: item.from_user,
+              message: item.message,
               time,
-              showTime:item.show_time,
-              to:item.to_user,
-              type:item.type
+              showTime: item.show_time,
+              to: item.to_user,
+              type: item.type
             }
-            this.addMessageList(obj.to,message,true)
+            this.addMessageList(obj.to, message, true)
           })
           this.scrollFun("request");
           this.messageList.isLoading = false;
         })
       }
-      
+
     }
   }
 }
@@ -448,9 +448,9 @@ ul {
   overflow-x: hidden;
 }
 
-#chatBody .time{
-  text-align:center;
-  margin:2rem 0 ;
+#chatBody .time {
+  text-align: center;
+  margin: 2rem 0;
   color: white;
 }
 
@@ -463,55 +463,62 @@ ul {
 
 
 /* 消息盒子，包括头像，用户名和消息 */
-.comment_box{
+.comment_box {
   display: flex;
   margin-top: 2rem;
 }
-.comment-box-we{
+
+.comment-box-we {
   flex-direction: row-reverse;
 }
-.comment-box-other{
 
-}
+.comment-box-other {}
 
 /* 聊天头像框样式 */
 /*
   flex-shrink 禁止被压缩
 */
-.comment_avator{
+.comment_avator {
   margin-top: 1.2rem;
   height: 4rem;
   width: 4rem;
   border-radius: 50%;
   flex-shrink: 0
 }
-.comment-box-we .comment_avator{
+
+.comment-box-we .comment_avator {
   margin-left: 1rem;
 }
-.comment-box-other .comment_avator{
+
+.comment-box-other .comment_avator {
   margin-right: 1rem;
 }
-.single_comment .comment_avator{
+
+.single_comment .comment_avator {
   margin-top: 0rem;
 }
+
 /* 
 
     用户名和消息外面的盒子，用于分割头像
     宽度无所谓，占用剩余空间 flex-grow
 
 */
-.comment_username_message{
+.comment_username_message {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
-.comment-box-other .comment_username_message{
+
+.comment-box-other .comment_username_message {
   align-items: flex-start;
-  
+
 }
-.comment-box-we .comment_username_message{
+
+.comment-box-we .comment_username_message {
   align-items: flex-end;
 }
+
 /* 消息上面的用户名样式 */
 
 .comment-username {
@@ -539,6 +546,7 @@ ul {
   border-radius: 0.5rem;
   padding: 1rem;
   box-sizing: border-box;
+  text-align: left;
   white-space: pre-wrap;
   /* 保留换行符 */
   word-wrap: break-word;
@@ -548,8 +556,9 @@ ul {
   display: inline-block;
   position: relative;
 }
-.single_comment .comment{
-  margin-top:1.1rem;
+
+.single_comment .comment {
+  margin-top: 1.1rem;
 }
 
 .comment-box-other .comment {
@@ -560,7 +569,7 @@ ul {
 /* 我方发送消息时的气泡效果 部分 */
 .comment-box-we .comment {
   background: #8ec5fc;
-  text-align: right;
+  text-align: left;
 }
 
 /* 对话框小尾巴 */
