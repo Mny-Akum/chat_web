@@ -554,13 +554,11 @@ ul {
 
 .comment-box-other .comment {
   background: #f89999;
-  text-align: left;
 }
 
 /* 我方发送消息时的气泡效果 部分 */
 .comment-box-we .comment {
   background: #8ec5fc;
-  text-align: right;
 }
 
 /* 对话框小尾巴 */
