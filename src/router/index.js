@@ -5,11 +5,11 @@ const routes = [
 {
     path:'/login',
     name:'login',
-    component:()=>import('@/components/Login.vue')
+    component:()=>import('@/view/Login.vue')
 },{
     path:'/chat',
     name:'chat',
-    component: ()=>import('@/components/Chat.vue')
+    component: ()=>import('@/view/Chat.vue')
 }
 ]
 let router = new VueRouter({routes})

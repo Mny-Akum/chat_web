@@ -15,19 +15,30 @@
             @click="choiceUser(item)">{{ item.username }}</li>
         </ul>
       </main>
+
       <div id="right">
+        <!-- 显示当前对话的用户 -->
         <div id="chatHeader">{{ chatUser.username }}</div>
-        <el-main id="chatBody">
+        <!-- 消息列表 -->
+        <el-main id="chatBody" ref="chatBody" @onscroll="messageLazyLoad">
+          <chat-loading :isLoading="messageList.isLoading" text="消息正在赶来喵~"/>
           <div v-for="(item, index) in messageList[chatUser.email]" :key="index">
             <div class="time" v-if="item.showTime">{{ item.time }}</div>
-            <div :class="item.from == username ? 'comment-box-we' : 'comment-box-other'">
-              <div class="comment-username" v-if="item.type == 'group'">{{ emailMap[item.from] }}</div>
-              <div class="comment-container">
+            <div class="comment_box" 
+              :class="{
+                'single_comment': item.type != 'group',
+                'comment-box-we': item.from == username,
+                'comment-box-other':item.from != username}"
+            >
+              <el-avatar class="comment_avator" src="https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa" />
+              <div class="comment_username_message">
+                <div class="comment-username" v-if="item.type == 'group'">{{ emailMap[item.from] }}</div>
                 <div class="comment" v-html="item.message"></div>
               </div>
             </div>
           </div>
         </el-main>
+        <!-- 输入框 -->
         <div id="chatFooter" @keypress="keypressFun">
           <el-input id="areaMsg" type="textarea" :rows="2" placeholder="请输入内容" v-model="sendMessage">
           </el-input>
@@ -38,26 +49,25 @@
   </div>
 </template>
 <script>
-import {dbUtil,ChatDB} from "@/utils/chatDB";
 let socket;
-import suspensionBall from './suspension.vue';
+import suspensionBall from '../components/suspension.vue';
+import {getUserList,getMessageList} from '@/api/api'
+import ChatLoading from '@/components/ChatLoading.vue';
 export default {
   name: 'app',
   components: {
-    suspensionBall
+    suspensionBall,
+    ChatLoading
   },
   data() {
     return {
-      chatDB:null,
       ip: "",
       sendMessage: "",
-      chatUser: {
-        username: "群组聊天",
-        email: "group"
-      },
+      chatUser: {},
       userlist: [],
       emailMap: {},
       messageList: {
+        isLoading:false,
         page:{}
       },
       username: "",
@@ -66,16 +76,27 @@ export default {
       justTime: {}
     }
   },
+  watch:{
+    chatUser:{
+      deep:true,
+      handler({email,username,type}){
+        this.getStoreMessage({
+          to:email,
+          from:this.username,
+          type,
+          startNum:this.messageList.page[email]?this.messageList.page[email].count:0,
+          pageSize:10
+        })
+        this.scrollFun("send")
+      }
+    }
+  },
   mounted() {
     document.title = "聊天室"
     this.username = this.$route.params.email
+    this.$refs.chatBody.$el.addEventListener('scroll',this.messageLazyLoad)
     this.ip = localStorage.getItem("ip")
-    this.chatDB = new ChatDB("chat","chatMessage");
-    this.getStoreData();
-    if (!this.username) {
-      this.$message({ type: "warning", message: "暂未登录，请重新登录" })
-      this.$router.push("/login")
-    }
+    this.chatUser = {username: "群组聊天", email: "group",type:"group"};
     this.init()
   },
   computed: {
@@ -96,7 +117,7 @@ export default {
         console.log("您的浏览器不支持WebSocket");
       } else {
         console.log("您的浏览器支持WebSocket");
-        let socketUrl = "ws://" + this.ip + "/chat/server/" + this.username;
+        let socketUrl = "ws://" + this.ip + "/chat/server/" + this.username +'?token='+localStorage.getItem("token");
         if (socket != null) {
           socket.close();
           socket = null;
@@ -116,7 +137,6 @@ export default {
             }else{
               this.addMessageList(data.from,data)
             }
-            this.scrollFun()
           }
         };
         //关闭事件
@@ -142,7 +162,7 @@ export default {
       } else {
         let message;
         let to;
-        if (this.chatUser.email == "group") {
+        if (this.chatUser.type == "group") {
           to = "group"
           message = {
             type: "group",
@@ -177,34 +197,21 @@ export default {
       webList.forEach(item => {
         onlineUser.add(item.username)
       })
-      this.$axios.get("/chat/user/list").then(res => {
+      getUserList().then(res => {
         let arr = res.data.data
-        let reLogin = false;
         let map = {};
         arr.forEach((item) => {
           delete item.password
           map[item.email] = item.username
           item.online = onlineUser.has(item.email)
-          if (item.email == this.username) {
-            reLogin = true
-          }
         })
-        if (!reLogin) {
-          this.$router.replace("/login")
-        }
         this.emailMap = map
         this.userlist = arr
-      })
-    },
-    //数据持久化，将消息储存到本地
-    messageStoreToDB(data){
-      this.chatDB.insertData(data)
-    },
-    //进行初始化
-    getStoreData(){
-      this.chatDB.selectData("to_user","group").then(data=>{
-        this.addMessageList("group",data.list)
-      })
+      }).catch(error=>{
+          localStorage.setItem("autoLogin",false);
+          this.$message({ type: "warning", message: "验证过期，请重新登录" })
+          this.$router.replace("/login")
+      });
     },
     //是否显示时间
     showTime(name) {
@@ -217,45 +224,53 @@ export default {
     choiceUser(item) {
       this.sendMessage = ""
       if (item) {
-        this.chatUser = { username: item.username, email: item.email }
+        this.chatUser = { username: item.username, email: item.email,type:'single'}
       } else {
-        this.chatUser = { username: "群组聊天", email: "group" }
+        this.chatUser = { username: "群组聊天", email: "group",type:'group'}
       }
     },
     //将消息添加到对象列表中
-    addMessageList(key,value){
-      //判断是否是消息列表
-      if(value instanceof Array){
+    addMessageList(key,value,desc){
+      //判断是否是倒序插入
+      if(desc){
         if(this.messageList[key]){
-          this.messageList[key].push(value)
-          this.messageList.page[key].count += value.length
-          this.messageList.page[key].page++ 
+          this.messageList[key].unshift(value)
+          this.messageList.page[key].count++
         }else{
-          this.$set(this.messageList,key,value)
-          this.messageList.page[key] = {count:value.length,page:1}
+          this.$set(this.messageList,key,[value])
         }
-        return
       }else{
         if(this.messageList[key]){
           this.messageList[key].push(value)
           this.messageList.page[key].count++
         }else{
           this.$set(this.messageList,key,[value])
-          this.messageList.page[key] = {count:1,page:1}
         }
-        this.messageStoreToDB(value)
       }
+      this.scrollFun()
       
-      console.log(this.messageList)
     },
-    //发送消息直接到底部
+    /**
+     *  发送消息直接到底部
+     *  分为三种,
+     * 1. type == "send",不管距离底部的高度直接滚动到底部,一般是发送消息时
+     * 2. type == "request" 这种用于消息懒加载时,保留之前的高度 
+     * 3. 另一种是不进行填入,这种要看距离底部的高度,一般是接收消息时
+     */
     scrollFun(type) {
+      //获取元素节点,其实不加这句话也一样,可以通过id直接获取
+      let chatBody = this.$refs.chatBody.$el
       let scrollHeight1 = chatBody.scrollHeight
       let scrollTop1 = chatBody.scrollTop
       let height = chatBody.clientHeight
       if (type == "send") {
         this.$nextTick(() => {
           chatBody.scrollBy(0, chatBody.scrollHeight)
+        })
+      }else if(type == "request"){
+        this.$nextTick(() => {
+          let scrollHeight2 = chatBody.scrollHeight
+          chatBody.scrollBy(0, scrollHeight2-scrollHeight1)
         })
       } else {
         this.$nextTick(() => {
@@ -266,12 +281,62 @@ export default {
         })
       }
     },
+    //消息懒加载，滚到顶部加载更多
+    //isLoading 防止多次请求
+    messageLazyLoad(){
+      let top = chatBody.scrollTop;
+      let scrollHeight = chatBody.scrollHeight;
+      let height = chatBody.clientHeight;
+      if(top < 1 && !this.messageList.isLoading && scrollHeight != height){
+        let {email,type} = this.chatUser;
+        this.getStoreMessage({
+          to:email,
+          from:this.username,
+          type,
+          startNum:this.messageList.page[email]?this.messageList.page[email].count:0,
+          pageSize:10
+        })
+      }
+    },
     //ctrl+enter发送消息
     keypressFun(event) {
       if (event.ctrlKey && event.code == "Enter") {
         this.send()
       }
     },
+    getStoreMessage(params){
+      //判断是否应该扩容，没有该对象，或者还有更多就进行扩容
+      if(!this.messageList.page[params.to] || this.messageList.page[params.to].isMore){
+        this.messageList.isLoading = true;
+        getMessageList(params).then(res=>{
+          let obj = res.data.data;
+          let messageList = obj.messageList;
+          //进行一次初始化
+          if(!this.messageList.page[obj.to]){
+            this.messageList.page[obj.to] = {count:1,isMore:obj.count==obj.pageSize}
+          }else{
+            this.messageList.page[obj.to].isMore = (obj.count == obj.pageSize)
+          }
+          
+          messageList.forEach(item=>{
+            let timeSplit = item.send_time.split('T')
+            let time = `${timeSplit[0]} ${timeSplit[1].substr(0,5)}`
+            let message = {
+              from:item.from_user,
+              message:item.message,
+              time,
+              showTime:item.show_time,
+              to:item.to_user,
+              type:item.type
+            }
+            this.addMessageList(obj.to,message,true)
+          })
+          this.scrollFun("request");
+          this.messageList.isLoading = false;
+        })
+      }
+      
+    }
   }
 }
 </script>
@@ -353,6 +418,7 @@ ul {
 }
 
 #areaMsg {
+  color: black;
   box-sizing: border-box;
   padding: 2rem;
   height: 20vh;
@@ -371,6 +437,8 @@ ul {
   font-size: 1.2rem;
   margin-top: 0.5vh;
   margin-right: 1.8rem;
+  border: none;
+  background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
 }
 
 #chatBody {
@@ -386,37 +454,74 @@ ul {
   color: white;
 }
 
-.comment-container {
-  /* 可选：设置一个最大宽度以防止内容过多时元素过宽 */
-  box-sizing: border-box;
-  margin-bottom: 1rem;
-  /* 确保内边距和边框不会增加元素的外部尺寸 */
+/* 可选：为.comment添加一些阴影以增加视觉深度 */
+/**
+  other为其他人的消息
+  we为自己发送的消息
+  single为单人聊天的消息，和群组聊天不同，需要分开渲染
+*/
+
+
+/* 消息盒子，包括头像，用户名和消息 */
+.comment_box{
+  display: flex;
+  margin-top: 2rem;
+}
+.comment-box-we{
+  flex-direction: row-reverse;
+}
+.comment-box-other{
 
 }
 
-.comment-box-other .comment-container {
-  max-width: 100%;
-  text-align: left;
-
+/* 聊天头像框样式 */
+/*
+  flex-shrink 禁止被压缩
+*/
+.comment_avator{
+  margin-top: 1.2rem;
+  height: 4rem;
+  width: 4rem;
+  border-radius: 50%;
+  flex-shrink: 0
 }
-
-.comment-box-we .comment-container {
-  width: 100%;
-  text-align: right;
+.comment-box-we .comment_avator{
+  margin-left: 1rem;
 }
+.comment-box-other .comment_avator{
+  margin-right: 1rem;
+}
+.single_comment .comment_avator{
+  margin-top: 0rem;
+}
+/* 
 
+    用户名和消息外面的盒子，用于分割头像
+    宽度无所谓，占用剩余空间 flex-grow
+
+*/
+.comment_username_message{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.comment-box-other .comment_username_message{
+  align-items: flex-start;
+  
+}
+.comment-box-we .comment_username_message{
+  align-items: flex-end;
+}
+/* 消息上面的用户名样式 */
 
 .comment-username {
-  /* width: 150px; */
-  margin-bottom: 0.3rem;
-  margin-top: 1rem;
+  padding: 0.4rem;
   /* 添加底部外边距以分隔评论数据和评论内容 */
-  /* padding: 0 10px; */
   /* 可选：添加内边距以增加可读性 */
   box-sizing: border-box;
   /* 确保内边距不会增加元素的外部宽度 */
-  font-size: 1rem;
-  color: #666;
+  font-size: 1.1rem;
+  color: white;
   /* margin-left: 280px; */
 }
 
@@ -428,8 +533,9 @@ ul {
   text-align: right;
 }
 
+/* 聊天消息样式 */
+
 .comment {
-  display: table;
   border-radius: 0.5rem;
   padding: 1rem;
   box-sizing: border-box;
@@ -438,26 +544,27 @@ ul {
   word-wrap: break-word;
   /* 防止长单词或URL破坏布局 */
   font-size: 1.2rem;
-  max-width: 90%;
+  max-width: 80%;
   display: inline-block;
   position: relative;
-  text-align: left;
+}
+.single_comment .comment{
+  margin-top:1.1rem;
 }
 
 .comment-box-other .comment {
   background: #f89999;
+  text-align: left;
 }
 
 /* 我方发送消息时的气泡效果 部分 */
 .comment-box-we .comment {
   background: #8ec5fc;
+  text-align: right;
 }
 
-/* 可选：为.comment添加一些阴影以增加视觉深度 */
-/**
-  other为其他人的消息
-  we为自己发送的消息
-*/
+/* 对话框小尾巴 */
+
 .comment:after {
   content: '';
   width: 0;

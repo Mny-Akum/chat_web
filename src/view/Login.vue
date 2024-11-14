@@ -20,7 +20,7 @@
                             <el-switch v-model="autoLogin" inactive-color="#e0c3fc" active-color="#8ec5fc"
                                 active-text="自动登录" />
                         </div>
-                        <button class="submit" style="margin: 3rem auto 0;" @click="login">登录账号</button>
+                        <button class="submit" style="margin: 3rem auto 0;" @click="chatLogin">登录账号</button>
                     </div>
 
                     <div class="fn">
@@ -39,7 +39,7 @@
                                 maxlength="20">
                         </div>
                         <!-- 提交按钮，保留class以应用样式 -->
-                        <button class="submit" @click="register">一键注册</button>
+                        <button class="submit" @click="chatRegister">一键注册</button>
                     </div>
                     <div class="fn">
                         <a @click="changePage('login')">登录账号</a>
@@ -50,7 +50,7 @@
     </div>
 </template>
 <script>
-// import this.$axios from 'this.$axios';
+import {login,register} from '@/api/api'
 export default {
     data() {
         return {
@@ -90,6 +90,7 @@ export default {
                 });
             });
         },
+        //按钮事件，进行切换，确认切换后的字体颜色
         changePage(mode) {
             this.email = ""
             this.username = ""
@@ -100,13 +101,12 @@ export default {
                 switchBtnArr[0].style.color = this.isSave ? "#4fa7ff":"#d2a8fa"
                 switchBtnArr[1].style.color = this.autoLogin ? "#4fa7ff":"#d2a8fa"
             })
-
         },
-        login() {
+        chatLogin() {
             if (!this.check()) {
                 return
             }
-            this.$axios.post('/chat/user/login', {
+            login({
                 email: this.email,
                 password: this.password
             }).then(res => {
@@ -117,9 +117,13 @@ export default {
                         if (this.isSave) {
                             localStorage.setItem('user', JSON.stringify({ email: this.email, password: this.password }))
                         }
+                        //获取token，进行登录
+                        let token = data.data;
+                        this.$axios.defaults.headers.common['token'] = token
+                        localStorage.setItem("token",token)
                         this.$router.push({
                             name: "chat",
-                            params: { email: this.email },
+                            params: {email: this.email},
                         });
                     } else {
                         this.$message({ type: "error", message: data.msg })
@@ -130,11 +134,12 @@ export default {
                 this.$message({ type: "error", message: "请求错误" })
             })
         },
-        register() {
+        //注册方法
+        chatRegister() {
             if (!this.check()) {
                 return
             }
-            this.$axios.post('/chat/user/register', {
+            register({
                 email: this.email,
                 password: this.password,
                 username: this.username
@@ -153,6 +158,7 @@ export default {
                 this.$message({ type: "error", message: "请求错误" })
             })
         },
+        //登录和注册功能检测
         check() {
             var emailPattern = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
             var bool = emailPattern.test(this.email);
@@ -169,13 +175,13 @@ export default {
             }
             return bool;
         },
+        //初始化操作
         init() {
             document.title = "欢迎来到App外包工坊"
             document.documentElement.style.fontSize = document.documentElement.clientHeight / 1080 * 12 + 'px'
             this.ip = (this.ip ? this.ip : localStorage.getItem('ip'))
             localStorage.setItem('ip', this.ip)
             this.$axios.defaults.baseURL = 'http://' + this.ip
-            this.$axios.defaults.headers.post['Content-Type'] = 'application/json'
         },
         mountedInit() {
             let switchBtnArr = document.getElementsByClassName("el-switch__label");
