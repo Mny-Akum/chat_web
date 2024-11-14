@@ -21,11 +21,18 @@
         <div id="chatHeader">{{ chatUser.username }}</div>
         <!-- 消息列表 -->
         <el-main id="chatBody" ref="chatBody" @onscroll="messageLazyLoad">
+          <chat-loading :isLoading="messageList.isLoading" text="消息正在赶来喵~"/>
           <div v-for="(item, index) in messageList[chatUser.email]" :key="index">
             <div class="time" v-if="item.showTime">{{ item.time }}</div>
-            <div :class="item.from == username ? 'comment-box-we' : 'comment-box-other'">
-              <div class="comment-username" v-if="item.type == 'group'">{{ emailMap[item.from] }}</div>
-              <div class="comment-container">
+            <div class="comment_box" 
+              :class="{
+                'single_comment': item.type != 'group',
+                'comment-box-we': item.from == username,
+                'comment-box-other':item.from != username}"
+            >
+              <el-avatar class="comment_avator" src="https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa" />
+              <div class="comment_username_message">
+                <div class="comment-username" v-if="item.type == 'group'">{{ emailMap[item.from] }}</div>
                 <div class="comment" v-html="item.message"></div>
               </div>
             </div>
@@ -43,12 +50,14 @@
 </template>
 <script>
 let socket;
-import suspensionBall from './suspension.vue';
+import suspensionBall from '../components/suspension.vue';
 import {getUserList,getMessageList} from '@/api/api'
+import ChatLoading from '@/components/ChatLoading.vue';
 export default {
   name: 'app',
   components: {
-    suspensionBall
+    suspensionBall,
+    ChatLoading
   },
   data() {
     return {
@@ -276,9 +285,10 @@ export default {
     //isLoading 防止多次请求
     messageLazyLoad(){
       let top = chatBody.scrollTop;
-      let {email,type} = this.chatUser;
-      if(top < 1 && !this.messageList.isLoading){
-        this.messageList.isLoading = true;
+      let scrollHeight = chatBody.scrollHeight;
+      let height = chatBody.clientHeight;
+      if(top < 1 && !this.messageList.isLoading && scrollHeight != height){
+        let {email,type} = this.chatUser;
         this.getStoreMessage({
           to:email,
           from:this.username,
@@ -297,6 +307,7 @@ export default {
     getStoreMessage(params){
       //判断是否应该扩容，没有该对象，或者还有更多就进行扩容
       if(!this.messageList.page[params.to] || this.messageList.page[params.to].isMore){
+        this.messageList.isLoading = true;
         getMessageList(params).then(res=>{
           let obj = res.data.data;
           let messageList = obj.messageList;
@@ -443,30 +454,69 @@ ul {
   color: white;
 }
 
-.comment-container {
-  /* 可选：设置一个最大宽度以防止内容过多时元素过宽 */
-  box-sizing: border-box;
-  margin-bottom: 1rem;
-  /* 确保内边距和边框不会增加元素的外部尺寸 */
+/* 可选：为.comment添加一些阴影以增加视觉深度 */
+/**
+  other为其他人的消息
+  we为自己发送的消息
+  single为单人聊天的消息，和群组聊天不同，需要分开渲染
+*/
+
+
+/* 消息盒子，包括头像，用户名和消息 */
+.comment_box{
+  display: flex;
+  margin-top: 2rem;
+}
+.comment-box-we{
+  flex-direction: row-reverse;
+}
+.comment-box-other{
 
 }
 
-.comment-box-other .comment-container {
-  text-align: left;
-
+/* 聊天头像框样式 */
+/*
+  flex-shrink 禁止被压缩
+*/
+.comment_avator{
+  margin-top: 1.2rem;
+  height: 4rem;
+  width: 4rem;
+  border-radius: 50%;
+  flex-shrink: 0
 }
-
-.comment-box-we .comment-container {
-  text-align: right;
+.comment-box-we .comment_avator{
+  margin-left: 1rem;
 }
+.comment-box-other .comment_avator{
+  margin-right: 1rem;
+}
+.single_comment .comment_avator{
+  margin-top: 0rem;
+}
+/* 
 
+    用户名和消息外面的盒子，用于分割头像
+    宽度无所谓，占用剩余空间 flex-grow
+
+*/
+.comment_username_message{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.comment-box-other .comment_username_message{
+  align-items: flex-start;
+  
+}
+.comment-box-we .comment_username_message{
+  align-items: flex-end;
+}
+/* 消息上面的用户名样式 */
 
 .comment-username {
-  /* width: 150px; */
-  margin-bottom: 0.3rem;
-  margin-top: 1rem;
+  padding: 0.4rem;
   /* 添加底部外边距以分隔评论数据和评论内容 */
-  /* padding: 0 10px; */
   /* 可选：添加内边距以增加可读性 */
   box-sizing: border-box;
   /* 确保内边距不会增加元素的外部宽度 */
@@ -483,8 +533,9 @@ ul {
   text-align: right;
 }
 
+/* 聊天消息样式 */
+
 .comment {
-  display: table;
   border-radius: 0.5rem;
   padding: 1rem;
   box-sizing: border-box;
@@ -493,26 +544,27 @@ ul {
   word-wrap: break-word;
   /* 防止长单词或URL破坏布局 */
   font-size: 1.2rem;
-  max-width: 90%;
+  max-width: 80%;
   display: inline-block;
   position: relative;
-  text-align: left;
+}
+.single_comment .comment{
+  margin-top:1.1rem;
 }
 
 .comment-box-other .comment {
   background: #f89999;
+  text-align: left;
 }
 
 /* 我方发送消息时的气泡效果 部分 */
 .comment-box-we .comment {
   background: #8ec5fc;
+  text-align: right;
 }
 
-/* 可选：为.comment添加一些阴影以增加视觉深度 */
-/**
-  other为其他人的消息
-  we为自己发送的消息
-*/
+/* 对话框小尾巴 */
+
 .comment:after {
   content: '';
   width: 0;
