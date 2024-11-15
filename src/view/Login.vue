@@ -15,8 +15,10 @@
                         <input class="acc" type="text" v-model="email" placeholder="邮箱">
                         <input class="acc" type="password" v-model="password" placeholder="密码" maxlength="20">
                         <div class="switches">
-                            <el-switch v-model="isSave" inactive-color="#e0c3fc" active-color="#8ec5fc" active-text="记住密码" class="switchStyle" />
-                            <el-switch v-model="autoLogin" inactive-color="#e0c3fc" active-color="#8ec5fc" active-text="自动登录" class="switchStyle" />
+                            <el-switch v-model="isSave" inactive-color="#e0c3fc" active-color="#8ec5fc"
+                                active-text="记住密码" class="switchStyle" />
+                            <el-switch v-model="autoLogin" inactive-color="#e0c3fc" active-color="#8ec5fc"
+                                active-text="自动登录" class="switchStyle" />
                         </div>
                         <button class="submit" style="margin: 3rem auto 0;" @click="chatLogin">登录账号</button>
                     </div>
@@ -48,7 +50,7 @@
     </div>
 </template>
 <script>
-import {login,register} from '@/api/api'
+import { login, register } from '@/api/api'
 export default {
     name:"login",
     data() {
@@ -96,9 +98,9 @@ export default {
             this.password = ""
             this.page = mode
             let switchBtnArr = document.getElementsByClassName("el-switch__label");
-            this.$nextTick(()=>{
-                switchBtnArr[0].style.color = this.isSave ? "#4fa7ff":"#d2a8fa"
-                switchBtnArr[1].style.color = this.autoLogin ? "#4fa7ff":"#d2a8fa"
+            this.$nextTick(() => {
+                switchBtnArr[0].style.color = this.isSave ? "#4fa7ff" : "#d2a8fa"
+                switchBtnArr[1].style.color = this.autoLogin ? "#4fa7ff" : "#d2a8fa"
             })
         },
         chatLogin() {
@@ -119,10 +121,10 @@ export default {
                         //获取token，进行登录
                         let token = data.data;
                         this.$axios.defaults.headers.common['token'] = token
-                        localStorage.setItem("token",token)
+                        localStorage.setItem("token", token)
                         this.$router.push({
                             name: "chat",
-                            params: {email: this.email},
+                            params: { email: this.email },
                         });
                     } else {
                         this.$message({ type: "error", message: data.msg })
