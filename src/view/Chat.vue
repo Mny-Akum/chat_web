@@ -29,10 +29,9 @@
               'comment-box-we': item.from == username,
               'comment-box-other': item.from != username
             }">
-              <el-avatar class="comment_avator"
-                src="https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa" />
+              <el-avatar class="comment_avatar" :src="getUserAvatar(item.from)" />
               <div class="comment_username_message">
-                <div class="comment-username" v-if="item.type == 'group'">{{ emailMap[item.from] }}</div>
+                <div class="comment-username" v-if="item.type == 'group'">{{ getUsername(item.from) }}</div>
                 <div class="comment" v-html="item.message"></div>
               </div>
             </div>
@@ -53,6 +52,7 @@ let socket;
 import MyCat from '@/components/MyCat.vue';
 import { getUserList, getMessageList } from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
+import { getRandomNum } from '@/utils/utils'
 export default {
   name: 'app',
   components: {
@@ -197,21 +197,37 @@ export default {
       webList.forEach(item => {
         onlineUser.add(item.username)
       })
-      getUserList().then(res => {
-        let arr = res.data.data
-        let map = {};
-        arr.forEach((item) => {
-          delete item.password
-          map[item.email] = item.username
-          item.online = onlineUser.has(item.email)
-        })
-        this.emailMap = map
-        this.userlist = arr
-      }).catch(error => {
-        localStorage.setItem("autoLogin", false);
-        this.$message({ type: "warning", message: "验证过期，请重新登录" })
-        this.$router.replace("/login")
-      });
+      getUserList()
+        .then(res => {
+          let arr = res.data.data
+          let map = {};
+          arr.forEach((item) => {
+            delete item.password
+            map[item.email] = {
+              username: item.username,
+              avatar: item.avatar
+            }
+            item.online = onlineUser.has(item.email)
+          })
+          this.emailMap = map
+          this.userlist = arr
+        }).catch(error => {
+          localStorage.setItem("autoLogin", false);
+          this.$message({ type: "warning", message: "验证过期，请重新登录" })
+          this.$router.replace("/login")
+        });
+    },
+    //通过email获取头像
+    getUserAvatar(email) {
+      let avatar = this.emailMap[email]?.avatar ? this.emailMap[email].avatar : 'https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa'
+      return avatar
+    },
+    //通过email获取名字
+    getUsername(email) {
+      console.log(email)
+      let username = this.emailMap[email]?.username;
+      username = username ? username : '御坂' + getRandomNum(10000, 20000) + '号';
+      return username
     },
     //是否显示时间
     showTime(name) {
@@ -248,7 +264,6 @@ export default {
         }
       }
       this.scrollFun()
-
     },
     /**
      *  发送消息直接到底部
@@ -341,13 +356,13 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less">
 * {
   margin: 0px;
   padding: 0px;
 }
 
-.mian {
+.main {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -370,7 +385,7 @@ export default {
   padding: 2.5rem;
   font-size: 1.2rem;
   /* 亚卡力效果 */
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.85rem);
 }
 
 #left ul li {
@@ -469,17 +484,11 @@ ul {
   margin-top: 2rem;
 }
 
-.comment-box-we {
-  flex-direction: row-reverse;
-}
-
-.comment-box-other {}
-
 /* 聊天头像框样式 */
 /*
   flex-shrink 禁止被压缩
 */
-.comment_avator {
+.comment_avatar {
   margin-top: 1.2rem;
   height: 4rem;
   width: 4rem;
@@ -487,23 +496,9 @@ ul {
   flex-shrink: 0
 }
 
-.comment-box-we .comment_avator {
-  margin-left: 1rem;
-}
-
-.comment-box-other .comment_avator {
-  margin-right: 1rem;
-}
-
-.single_comment .comment_avator {
-  margin-top: 0rem;
-}
-
 /* 
-
     用户名和消息外面的盒子，用于分割头像
     宽度无所谓，占用剩余空间 flex-grow
-
 */
 .comment_username_message {
   display: flex;
@@ -511,17 +506,7 @@ ul {
   flex-grow: 1;
 }
 
-.comment-box-other .comment_username_message {
-  align-items: flex-start;
-
-}
-
-.comment-box-we .comment_username_message {
-  align-items: flex-end;
-}
-
 /* 消息上面的用户名样式 */
-
 .comment-username {
   padding: 0.4rem;
   /* 添加底部外边距以分隔评论数据和评论内容 */
@@ -533,16 +518,7 @@ ul {
   /* margin-left: 280px; */
 }
 
-.comment-box-other .comment-username {
-  text-align: left;
-}
-
-.comment-box-we .comment-username {
-  text-align: right;
-}
-
 /* 聊天消息样式 */
-
 .comment {
   border-radius: 0.5rem;
   padding: 1rem;
@@ -551,6 +527,7 @@ ul {
   white-space: pre-wrap;
   /* 保留换行符 */
   word-wrap: break-word;
+  word-break: break-all;
   /* 防止长单词或URL破坏布局 */
   font-size: 1.2rem;
   max-width: 80%;
@@ -558,23 +535,7 @@ ul {
   position: relative;
 }
 
-.single_comment .comment {
-  margin-top: 1.1rem;
-}
-
-.comment-box-other .comment {
-  background: #f89999;
-  text-align: left;
-}
-
-/* 我方发送消息时的气泡效果 部分 */
-.comment-box-we .comment {
-  background: #8ec5fc;
-  text-align: left;
-}
-
 /* 对话框小尾巴 */
-
 .comment:after {
   content: '';
   width: 0;
@@ -587,13 +548,79 @@ ul {
   font-size: 0;
 }
 
-.comment-box-other .comment:after {
-  left: -1.4rem;
-  border-color: transparent #f89999 transparent transparent;
+.comment-box-we {
+  flex-direction: row-reverse;
+
+  .comment_avatar {
+    margin-left: 1rem;
+  }
+
+  .comment_username_message {
+    align-items: flex-end;
+  }
+
+  .comment-username {
+    text-align: right;
+  }
+
+  .comment {
+    background: #8ec5fc;
+  }
+
+  .comment:after {
+    right: -1.4rem;
+    border-color: transparent transparent transparent #8ec5fc;
+  }
 }
 
-.comment-box-we .comment:after {
-  right: -1.4rem;
-  border-color: transparent transparent transparent #8ec5fc;
+.comment-box-other {
+  .comment_avatar {
+    margin-right: 1rem;
+  }
+
+  .comment_username_message {
+    align-items: flex-start;
+  }
+
+  .comment-username {
+    text-align: left;
+  }
+
+  .comment {
+    background: #f89999;
+  }
+
+  .comment:after {
+    left: -1.4rem;
+    border-color: transparent #f89999 transparent transparent;
+  }
+}
+
+.single_comment {
+  .comment_avatar {
+    margin-top: 0rem;
+  }
+
+  .comment {
+    margin-top: 1.1rem;
+  }
+}
+
+
+#chatBody {
+
+  // color: #8ec5fc
+
+}
+
+@supports (scrollbar-color: auto) {
+  #chatBody {
+    scrollbar-color: rgba(0, 0, 0, 0) rgba(255, 154, 150, 0);
+    transition: scrollbar-color 0.2s linear;
+  }
+
+  #chatBody:hover {
+    scrollbar-color: rgb(124, 213, 255) rgba(255, 136, 136, 0);
+  }
 }
 </style>
