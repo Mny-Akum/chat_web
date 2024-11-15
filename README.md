@@ -348,3 +348,41 @@ http://172.18.4.118:8080/chat/user
     "data": null
 }
 ```
+
+
+
+## Ⅴ fileUploader
+
+思路：本地上传文件=>后端接收文件，显示上传条=>上传完毕后生成下载框=>在页面显示文件列表
+
+在上传的同时返回文件表映射
+
+进度条websocket=>{
+
+localStore:"",("uuid")
+
+percent:"",
+
+type:"upload/download"
+
+}
+
+文件表映射=>{
+
+fileSize:""
+
+fileName:""
+
+uploadTime:""
+
+type:""  (1:image,2:file)
+
+localStore:"" (生成uuid存储)
+
+from:""
+
+to:""
+
+}
+
+增，删，查

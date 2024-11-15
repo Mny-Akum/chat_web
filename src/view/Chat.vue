@@ -2,7 +2,6 @@
   <div class="main">
     <div id="box">
       <div class="app">
-        <suspensionBall />
       </div>
       <main id="left">
         <ul>
@@ -50,14 +49,12 @@
 </template>
 <script>
 let socket;
-import suspensionBall from '../components/suspension.vue';
 import {getUserList,getMessageList} from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
 import {getRandomNum} from '@/utils/utils'
 export default {
-  name: 'app',
+  name: 'chat',
   components: {
-    suspensionBall,
     ChatLoading
   },
   data() {
