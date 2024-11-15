@@ -1,9 +1,14 @@
 <template>
+  <!-- 导航菜单组件，支持拖拽和点击展开隐藏 -->
   <nav class="menu" @mousedown="startDrag" :style="{ top: `${position.y}px`, left: `${position.x}px` }">
+    <!-- 隐藏的checkbox，用于控制菜单的展开和隐藏 -->
     <input type="checkbox" class="menu-toggler" id="menu_toggler" v-model="isMenuOpen" />
+    <!-- 自定义的菜单切换器图标 -->
     <div class="custom-toggler" :style="{ backgroundImage: 'url(' + togglerImage + ')' }"></div>
+    <!-- 菜单项列表 -->
     <ul>
       <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
+        <!-- 菜单项的链接，背景图片由menuItems数组提供 -->
         <a :href="item.href" :style="{ backgroundImage: 'url(' + item.image + ')' }"></a>
       </li>
     </ul>
@@ -12,14 +17,20 @@
 
 <script>
 export default {
-  name: 'MyCat',
+  name: 'App',
   data() {
     return {
+      // 菜单的位置信息
       position: { x: 100, y: 100 },
+      // 鼠标按下时的初始位置
       initialMousePos: { x: 0, y: 0 },
+      // 标记是否正在拖拽
       dragging: false,
-      isMenuOpen: false, // 控制菜单的显示与隐藏
-      togglerImage: require('@/assets/images/03.jpg'), // 自定义切换器的图片
+      // 控制菜单的显示与隐藏
+      isMenuOpen: false,
+      // 按钮图片
+      togglerImage: require('@/assets/images/03.jpg'),
+      // 菜单项数组，包含链接和背景图片
       menuItems: [
         { href: '#', image: require('@/assets/images/02.png') },
         { href: '#', image: require('@/assets/images/02.png') },
@@ -27,31 +38,51 @@ export default {
         { href: '#', image: require('@/assets/images/02.png') },
         { href: '#', image: require('@/assets/images/02.png') },
       ],
-    }
+    };
   },
-
   methods: {
+    // 开始拖拽事件处理函数
     startDrag(event) {
       this.dragging = true;
       this.initialMousePos = { x: event.clientX, y: event.clientY };
+      // 添加鼠标移动和鼠标释放事件监听
       document.addEventListener('mousemove', this.onDrag);
       document.addEventListener('mouseup', this.stopDrag);
     },
+    // 拖拽中事件处理函数
     onDrag(event) {
       if (this.dragging) {
-        this.position.x = this.position.x + (event.clientX - this.initialMousePos.x);
-        this.position.y = this.position.y + (event.clientY - this.initialMousePos.y);
+        // 计算新的位置
+        let newX = this.position.x + (event.clientX - this.initialMousePos.x);
+        let newY = this.position.y + (event.clientY - this.initialMousePos.y);
+
+        // 边界控制逻辑
+        const maxX = window.innerWidth - this.$el.offsetWidth;
+        const maxY = window.innerHeight - this.$el.offsetHeight;
+
+        // 确保菜单不会移出视窗
+        if (newX < 0) newX = 0;
+        if (newX > maxX) newX = maxX;
+        if (newY < 0) newY = 0;
+        if (newY > maxY) newY = maxY;
+
+        // 更新位置 
+        this.position.x = newX;
+        this.position.y = newY;
+
+        // 更新鼠标初始位置，以便下一次计算
         this.initialMousePos = { x: event.clientX, y: event.clientY };
       }
     },
+    // 停止拖拽事件处理函数
     stopDrag() {
       this.dragging = false;
+      // 移除鼠标移动和鼠标释放事件监听
       document.removeEventListener('mousemove', this.onDrag);
       document.removeEventListener('mouseup', this.stopDrag);
-    }
-  }
-}
-
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -67,15 +98,15 @@ body {
 
 .menu {
   position: absolute;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .menu-toggler {
-  position: absolute;
+  position: relative;
   display: block;
   top: 0;
   bottom: 0;
@@ -91,6 +122,7 @@ body {
   cursor: pointer;
 }
 
+/* 中间按钮的样式 */
 .custom-toggler {
   position: absolute;
   display: block;
@@ -99,9 +131,9 @@ body {
   left: 0;
   right: 0;
   margin: auto;
-  width: 80px;
+  width: 60px;
   /* Adjust to fit your custom image */
-  height: 80px;
+  height: 60px;
   /* Adjust to fit your custom image */
   background-size: cover;
   background-position-y: 20vh;
@@ -140,17 +172,18 @@ body {
 
 .menu-item {
   position: absolute;
-  z-index: 1;
   display: block;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   margin: auto;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   opacity: 0;
   transition: 0.5s;
+  z-index: 1;
+  ;
 }
 
 .menu-item a {

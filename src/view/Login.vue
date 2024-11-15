@@ -50,7 +50,7 @@
     </div>
 </template>
 <script>
-import {login,register} from '@/api/api'
+import { login, register } from '@/api/api'
 export default {
     data() {
         return {
@@ -97,9 +97,9 @@ export default {
             this.password = ""
             this.page = mode
             let switchBtnArr = document.getElementsByClassName("el-switch__label");
-            this.$nextTick(()=>{
-                switchBtnArr[0].style.color = this.isSave ? "#4fa7ff":"#d2a8fa"
-                switchBtnArr[1].style.color = this.autoLogin ? "#4fa7ff":"#d2a8fa"
+            this.$nextTick(() => {
+                switchBtnArr[0].style.color = this.isSave ? "#4fa7ff" : "#d2a8fa"
+                switchBtnArr[1].style.color = this.autoLogin ? "#4fa7ff" : "#d2a8fa"
             })
         },
         chatLogin() {
@@ -120,10 +120,10 @@ export default {
                         //获取token，进行登录
                         let token = data.data;
                         this.$axios.defaults.headers.common['token'] = token
-                        localStorage.setItem("token",token)
+                        localStorage.setItem("token", token)
                         this.$router.push({
                             name: "chat",
-                            params: {email: this.email},
+                            params: { email: this.email },
                         });
                     } else {
                         this.$message({ type: "error", message: data.msg })
@@ -178,7 +178,7 @@ export default {
         //初始化操作
         init() {
             document.title = "欢迎来到App外包工坊"
-            document.documentElement.style.fontSize = document.documentElement.clientHeight / 1080 * 12 + 'px'
+            document.documentElement.style.fontSize = document.documentElement.clientHeight / 1080 * 14  + 'px'
             this.ip = (this.ip ? this.ip : localStorage.getItem('ip'))
             localStorage.setItem('ip', this.ip)
             this.$axios.defaults.baseURL = 'http://' + this.ip

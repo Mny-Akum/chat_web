@@ -350,12 +350,13 @@ export default {
 .mian {
   width: 100%;
   height: 100%;
+  overflow: hidden;
   /* background-image: url('../assets/images/01.jpg'); */
 }
 
 #box {
   /* background: linear-gradient(215deg, #fdaeae, #ffe6c6); */
-  background-image: url(../assets/images/mygo.jpg);
+  background-image: url(../assets/images/04.jpg);
   background-position-x: 10vw;
   background-size: cover;
   display: flex;
