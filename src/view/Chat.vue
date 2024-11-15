@@ -80,6 +80,9 @@ export default {
     chatUser: {
       deep: true,
       handler({ email, username, type }) {
+        console.log(this.messageList)
+        console.log(email)
+        console.log(this.messageList.page[email])
         this.getStoreMessage({
           to: email,
           from: this.username,
@@ -182,6 +185,7 @@ export default {
         let h = new Date();
         let time = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, 0)}-${String(h.getDate()).padStart(2, 0)} ${String(h.getHours()).padStart(2, 0)}:${String(h.getMinutes()).padStart(2, 0)}`
         let send_data = { from: this.username, to, message: this.sendMessage, time, type: message.type, showTime };
+        //判断消息是否存在
         this.addMessageList(to, send_data)
         this.sendMessage = '';
       }
@@ -224,7 +228,6 @@ export default {
     },
     //通过email获取名字
     getUsername(email) {
-      console.log(email)
       let username = this.emailMap[email]?.username;
       username = username ? username : '御坂' + getRandomNum(10000, 20000) + '号';
       return username
@@ -247,6 +250,9 @@ export default {
     },
     //将消息添加到对象列表中
     addMessageList(key, value, desc) {
+      if (!this.messageList.page[key]) {
+        this.messageList.page[key] = { count: 1, isMore:true }
+      }
       //判断是否是倒序插入
       if (desc) {
         if (this.messageList[key]) {
@@ -371,7 +377,7 @@ export default {
 
 #box {
   /* background: linear-gradient(215deg, #fdaeae, #ffe6c6); */
-  background-image: url(../assets/images/04.jpg);
+  background-image: url(../assets/images/mygo.jpg);
   background-position-x: 10vw;
   background-size: cover;
   display: flex;
