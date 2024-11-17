@@ -14,11 +14,10 @@
         </ul>
         <ul>
           <div class="usercss" @click="useropen=!useropen">用户列表</div>
-          <li :class="item.online ? 'isLine' : 'notLine'" v-for="(item, index) in userlist" :key="index"
-            @click="choiceUser(item)" v-if="useropen"> 
-            <div  class="usercss itemcss" :class="emailMap[item.email]?.open?'currentcss':''"> 
+          <li :class="[item.online ? 'isLine' : 'notLine',chatUser.username==emailMap[item.email].username?'currentcss':'']" v-for="(item, index) in userlist" :key="index"
+            @click="choiceUser(item)" v-if="useropen"  class="usercss itemcss"> 
               <img :src="emailMap[item.email].avatar||'https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa'" class="avatarcss" :class="emailMap[item.email]?.messagePrompt?'avatarcss2':'avatarcss'">
-              {{ item.username }}</div>
+              {{ item.username }}
            
           </li>
         </ul>
@@ -95,15 +94,9 @@ export default {
     chatUser: {
       deep: true,
       handler({ email, username, type }) {
-          this.groupHint.open=false
-          for (let key in this.emailMap) {
-            this.emailMap[key].open=false
-          }   
+          this.groupHint.open=false  
         if(type=='group'){
           this.groupHint.open=true
-          console.log(this.groupHint.open)
-        }else{
-          this.emailMap[email].open=true
         }
         this.getStoreMessage({
           to: email,
