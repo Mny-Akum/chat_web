@@ -1,0 +1,164 @@
+.sign-content {
+	width: 94vw;
+	height: 40vh;
+	margin-left: 3vw;
+}
+
+.sign-time {
+	width: 98%;
+	height: 8vh;
+	text-align: center;
+	line-height: 10vh;
+	font-size: 22px;
+	margin-left: 1%;
+}
+
+.sign-button {
+	
+	width: 98%;
+	height: 15vh;
+	margin-left: 1%;
+	font-size: 22px;
+	text-align: center;
+	line-height: 11vh;
+	margin-top: 1%;
+	
+}
+
+.sign-button-big {
+	position: absolute;
+	top: 150px;
+	left: 110px;
+	width: 70px;
+	height: 70px;
+	/* margin: 0 auto; */
+	border-radius: 50%;
+	background-image: linear-gradient(to right top, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
+	color: white;
+	padding: 1%;
+}
+
+.sign-button-small {
+	width: 100%;
+	height: 100%;
+	margin: 0 auto;
+	border-radius: 50%;
+	background-color: pink;
+	color: white;
+	border: 0;
+	cursor: pointer;
+	
+}
+
+.sign-button-small:hover {
+	color: black;
+	background-color: #ffffff;
+}
+
+.sign-logs {
+	width: 98%;
+	height: 8vh;
+	margin-left: 1%;
+	text-align: center;
+	font-size: 12px;
+	line-height: 6vh;
+	position: absolute;
+	top: 235px;
+}
+
+.sign-logs>span>a {
+	color: #436eee;
+}
+
+.sign-texts {
+	width: 98%;
+	height: 4vh;
+	margin-left: 1%;
+	text-align: center;
+	font-size: 16px;
+	color: red;
+	border-bottom: 2px solid #dd514c;
+	line-height: 4vh;
+}
+
+.sign-users {
+	width: 98%;
+	height: 7vh;
+	margin-left: 1%;
+	padding-top: 2%;
+	border-bottom: 1px solid #dddddd;
+}
+
+.sign-users>span:nth-child(1) {
+	width: 12vw;
+	float: left;
+	margin-left: 5%;
+}
+
+.sign-users>span:nth-child(2) {
+	float: left;
+	font-size: 16px;
+	line-height: 6vh;
+	margin-left: 3%;
+}
+
+.sign-users>span:nth-child(3) {
+	float: right;
+	font-size: 15px;
+	line-height: 6vh;
+}
+
+.sign-users>span>img {
+	width: 100%;
+	height: 100%;
+	border-radius: 5%;
+}
+
+.sign-load {
+	width: 98%;
+	height: 4vh;
+	margin-left: 1%;
+	margin-top: 8%;
+	float: left;
+}
+
+.sign-load>button {
+	width: 94%;
+	height: 100%;
+	margin-left: 3%;
+	outline: none;
+	border: 0;
+	background-color: #e6e6e6;
+}
+
+.sign-load>button:hover {
+	background-color: #d4d4d4;
+}
+
+.login {
+	background-image: linear-gradient(to right top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.8));
+	width: 307px;
+	height: 235px;
+	box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2), 0 3px 1px #fff;
+	border-radius: 7px;
+	position: absolute;
+	left: 600px;
+	top: 10px;
+	border-radius: 30px;
+}
+.two img{
+	position:absolute;
+	left: 600px;
+	top: 10px;
+	width: 307px;
+	height: 150px;
+	z-index: 11;
+}
+.two{
+	position: absolute;
+	
+}
+
+.big {
+	position: relative;
+}

@@ -6,17 +6,289 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./css/person.css">
+    <link rel="stylesheet" href="./css/YuziPhotoAlbum.css">
+    <link rel="stylesheet" href="./css/barrage.css">
+    <link rel="stylesheet" href="./css/SmallGame.css">
+    <link rel="stylesheet" href="./css/SignIn.css">
+    <link rel="stylesheet" href="./css/music.css">
+    <link href="http://fonts.googleapis.com/css?family=Reenie+Beanie:regular" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="./js/person.js"></script>
+    <script type="text/javascript" src="./js/barrage.js"></script>
+    <script type="text/javascript" src="./js/SignIn.js"></script>
+    <!-- Live2D Path -->
+    <script src="../live2dw/lib/L2Dwidget.min.js"></script>
 </head>
-<div class="fixed-frame">
-    <!-- 左侧的圆形头像框 -->
-    <div class="profile-circle" onclick="document.getElementById('fileInput').click();">
-        <span>更换头像</span>
-    </div>
-    
-    <!-- 隐藏的文件选择器 -->
-    <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileChange(event)">
-</div>
 
+
+<body onload="sampleApp1()">
+
+
+    <!-- 大盒子 -->
+    <div class="bg">
+
+        <!-- 个人封面 -->
+        <div class="user-cover">
+            <label for="cover-upload" class="button">
+                <svg t="1731836452494" viewBox="0 -165 800 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="910" width="20" height="20">
+                    <path d="M128 853.333333h768.064L896 170.666667H127.936L128 853.333333zM127.936 128h768.128C919.594667 128 938.666667 146.986667 938.666667 170.666667v682.666666c0 23.573333-19.029333 42.666667-42.602667 42.666667H127.936A42.56 42.56 0 0 1 85.333333 853.333333V170.666667c0-23.573333 19.029333-42.666667 42.602667-42.666667z m200.128 527.082667c22.890667-19.626667 68.48-36.416 98.794667-36.416h20.949333c40.533333 0 95.914667-20.437333 126.549333-46.698667l52.373334-44.885333c22.890667-19.626667 68.48-36.416 98.794666-36.416H810.666667a21.333333 21.333333 0 0 0 0-42.666667h-85.12c-40.533333 0-95.936 20.437333-126.570667 46.698667l-52.373333 44.885333C523.690667 559.210667 478.165333 576 447.786667 576h-20.949334c-40.490667 0-95.914667 20.437333-126.549333 46.698667L199.445333 709.12a21.333333 21.333333 0 1 0 27.776 32.384l100.842667-86.442667z" fill="#ffffff" p-id="911"></path>
+                    <path d="M352 373.333333m-53.333333 0a53.333333 53.333333 0 1 0 106.666666 0 53.333333 53.333333 0 1 0-106.666666 0Z" fill="#ffffff" p-id="912"></path>
+                </svg>
+                <span>上传封面图片</span>
+            </label>
+            <!-- 隐藏的文件上传控件 -->
+            <input type="file" id="cover-upload" style="display: none;" accept="image/*" />
+        </div>
+            
+       
+         <!-- 模糊背景 -->
+         <div class="banner">
+            <div class="fixed-frame">
+                <!-- 左侧的圆形头像框 -->
+                <div class="profile-circle" onclick="document.getElementById('fileInput').click();">
+                    <span>更换头像</span>
+                </div>
+                
+                <!-- 隐藏的文件选择器 -->
+                <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileChange(event)">
+            </div>
+         </div>
+         
+
+        <!-- <div class="text">
+            <form action="">
+                <label for="story">Tell us your story:</label>
+
+                <textarea id="story" name="story" rows="5" cols="33">
+                It was a dark and stormy night...
+                </textarea>
+            </form>
+        </div> -->
+            
+
+        <div class="muc">
+            <div class="music-content-bg">
+                <div class="music-content">
+                    <div class="music-box">
+                        <!-- 上部分 -->
+                        <article>
+                            <div class="m-img-box">
+                                <div class="m-img-content"></div>
+                            </div>
+                            <div class="m-description-content">
+                                <article>
+                                    <p class="m-title">音乐名</p>
+                                    <p class="m-author">作者</p>
+                                </article>
+                                <div class="m-btn-box">
+                                    <button class="m-previous-btn">
+                                        <svg class="icon" aria-hidden="true" style="transform: scale(-1)">
+                                            <use href="#icon-xiayishou"></use>
+                                        </svg>
+                                    </button>
+                                    <button class="m-play-btn">
+                                        <svg class="icon" aria-hidden="true">
+                                            <use href="#icon-bofang"></use>
+                                        </svg>
+                                    </button>
+                                    <button class="m-next-btn">
+                                        <svg class="icon" aria-hidden="true">
+                                            <use href="#icon-xiayishou"></use>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                        <!-- 下部分 -->
+                        <section>
+                            <span class="m-current-time">00 : 00</span>
+                            <div class="m-progress-bar">
+                                <div class="m-progress-main">
+                                    <span class="m-progress-btn"></span>
+                                </div>
+                                <div class="m-progress-load"></div>
+                            </div>
+                            <span class="m-total-time">00 : 00</span>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- SignIn -->
+        <div class="big">
+			<div class="two">
+				<img src="img/01.gif" alt="" />
+			</div>
+			
+			<div class="login">
+				<!-- 签到按钮 -->
+                 <div class="sign-button">
+					<div class="sign-button-big">
+						<button class="sign-button-small" onclick="sign()" id="signs">签到</button>
+					</div>
+				</div>
+				<!-- 签到记录 -->
+				<div class="sign-logs" style="display: none;" id="signLogs">
+					<span>已连续签到<span id="signTimes">1</span>次，<a href="../indexMenus/signlogs.html">我的签到记录</a></span>
+				</div>
+			</div>
+		</div>
+        
+
+
+         <div class="danmu-container">
+        <!-- 游戏 -->
+            <!-- <div id="game">
+                <div id="bigdiv">
+            
+                    <div class="wrapper">
+                        <div class="current-status" id="currentStatus">
+                            <img src="./1.gif" id="currentBeastImg" alt="">
+                            <p>&nbsp; 's turn</p>
+                        </div>
+                        <div class="board" id="board">
+                            <div class="cell" data-cell></div>
+                            <div class="cell" data-cell></div>
+                            <div class="cell" data-cell></div>
+                            <div class="cell" data-cell></div>
+                            <div class="cell" data-cell></div>
+                            <div class="cell" data-cell></div>
+                            <div class="cell" data-cell></div>
+                            <div class="cell" data-cell></div>
+                            <div class="cell" data-cell></div>
+                        </div>
+                    
+                        <div class="btn-container">
+                            <button class="reset-button" id="resetButton">play again</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div> --> 
+        </div>
+         
+            <div class="input-container">
+			<input type="text" id="danmuInput" placeholder="输入弹幕">
+            <button id="sendDanmu">发送</button>
+            <div class="bu" id="b1">₯</div>
+         
+            
+    
+
+        <!-- Yuzi Picture --> 
+        <div id="cont">
+            			
+			<img src="../public/img/a.jpg" class="ima" id="a">
+			
+			<img src="../public/img/b.jpg" class="ima" id="b">
+			
+			<img src="../public/img/c.jpg" class="ima" id="c">
+			
+			<img src="../public/img/d.jpg" class="ima" id="d">
+			
+			<img src="../public/img/e.jpg" class="ima" id="e">
+			
+			<img src="../public/img/f.jpg" class="ima" id="f">
+			
+			<img src="../public/img/g.jpg" class="ima" id="g">
+			
+			<img src="../public/img/h.jpg" class="ima" id="h">
+        </div>
+
+        <!--  -->
+        <div class="end">
+
+        </div>
+
+        <div >
+            <div id="tooltip" style=" position: fixed;display: block; padding: 10px; background: rgba(0, 0, 0, 0.8); color: white; border-radius: 5px; z-index: 100000;right: 15px;top: 250px;">
+                大家好啊，欧内的手
+            </div>
+              <div id="live2d" class="live2d-widget-container" style="position: fixed; right: -40px; bottom: -50px; width: 300px; height: 600px; z-index: 99999; opacity: 1;">
+                <canvas id="live2dcanvas" width="600" height="1200" style="position: absolute; left: 0px; top: 0px; width: 300px; height: 600px;"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+<!-- 对话框 -->
+
+
+<!-- Import Live2D -->
+<script>
+ 
+ L2Dwidget
+    .init({
+        model: {
+            // 模型
+            jsonPath: "../live2dw/live2d-widget-model-z16/assets/z16.model.json", //"./live2dw/live2d-widget-model-shizuku/assets/shizuku.model.json",
+            scale: 1 //模型缩放比例
+        },
+        display: {
+            position: "right", //模型的位置（左or右）
+            width: 300, //模型宽度
+            height: 600, //模型高度
+            hOffset: -30, //模型水平偏移量
+            vOffset: -50 //模型垂直偏移量
+        },
+        mobile: {
+            show: true, //手机端是否显示
+            scale: 1 //缩放比例
+        },
+        react: {
+            opacity: 1 //模型不透明度
+        },
+    })
+
+</script>
+
+
+<!-- JavaScript 控制悬浮事件 -->
+<script>
+window.onload = function(){
+    const live2dCanvas = document.getElementById("live2d");
+    const tooltip = document.getElementById("tooltip");
+
+    // 当鼠标移入时显示对话框
+    live2dCanvas.addEventListener("mouseenter", (event) => {
+        tooltip.style.display = "block";
+        // tooltip.style.left = `${event.clientX + 10}px`;
+        // tooltip.style.top = `${event.clientY + 10}px`;
+    });
+
+    // 当鼠标移动时，更新对话框位置
+    live2dCanvas.addEventListener("mousemove", (event) => {
+        // tooltip.style.left = `${event.clientX + 10}px`;
+        // tooltip.style.top = `${event.clientY + 10}px`;
+    });
+
+    // 当鼠标移出时隐藏对话框
+    live2dCanvas.addEventListener("mouseleave", () => {
+        tooltip.style.display = "none";
+    });
+}
+</script>
+
+<script>
+    bt = document.getElementById("b1");
+    bt.addEventListener('click',
+        function() {
+            
+            window.scrollTo({
+             top: 1070,
+            behavior: "smooth",
+});
+        }
+    );
+
+
+</script>
+<script type="text/javascript" src="./js/iconfont.js"></script>
+<script type="text/javascript" src="./js/music.js"></script>
 </body>
 </html>

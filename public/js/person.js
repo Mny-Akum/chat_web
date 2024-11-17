@@ -10,3 +10,15 @@
             reader.readAsDataURL(file);
         }
     }
+
+    // 获取文件上传控件
+    const fileInput = document.getElementById('cover-upload');
+        
+    // 监听文件选择事件
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            alert(`您选择了文件: ${file.name}`);
+            // 你可以在这里添加上传图片的逻辑
+        }
+    });
