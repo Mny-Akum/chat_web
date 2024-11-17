@@ -4,10 +4,27 @@
 <head>
 <meta charset="utf-8">
 <title>页面标题</title>
+<style>
+    #box{
+        width: 100px;
+        background: #ff6060;
+        height: 100px;
+        border-radius: 50%;
+        border: 5px solid #00eeff;
+        animation: animateBg 5s linear infinite;
+    }
+    @keyframes animateBg{
+        0%{
+            border-color: #00eeff;
+        }
+        100%{
+            border-color: #ff0000;
+        }
+    }
+</style>
 </head>
 <body>
-    <div>
-        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="music.163.com/outchain/player?type=2&id=2599540758&auto=0&height=66"></iframe>
+    <div id="box">
     </div>
 </body>
 </html>

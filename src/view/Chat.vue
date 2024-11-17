@@ -49,7 +49,7 @@
 </template>
 <script>
 let socket;
-import MyCat from '@/components/MyCat.vue';
+import MyCat from '@/components/myChat/MyCat.vue';
 import { getUserList, getMessageList } from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
 import { getRandomNum } from '@/utils/utils'
@@ -80,9 +80,6 @@ export default {
     chatUser: {
       deep: true,
       handler({ email, username, type }) {
-        console.log(this.messageList)
-        console.log(email)
-        console.log(this.messageList.page[email])
         this.getStoreMessage({
           to: email,
           from: this.username,
@@ -203,6 +200,7 @@ export default {
       })
       getUserList()
         .then(res => {
+          console.log(this.userlist)
           let arr = res.data.data
           let map = {};
           arr.forEach((item) => {
@@ -223,7 +221,8 @@ export default {
     },
     //通过email获取头像
     getUserAvatar(email) {
-      let avatar = this.emailMap[email]?.avatar ? this.emailMap[email].avatar : 'https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa'
+      let avatar = this.emailMap[email]?.avatar ? this.emailMap[email].avatar : 'http://'+this.ip+"/chat/file/download/1/98859171c9c04d3897b1dc857185b738"
+      // 'https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa'
       return avatar
     },
     //通过email获取名字
@@ -325,6 +324,7 @@ export default {
         this.send()
       }
     },
+    //获取存储的消息
     getStoreMessage(params) {
       //判断是否应该扩容，没有该对象，或者还有更多就进行扩容
       if (!this.messageList.page[params.to] || this.messageList.page[params.to].isMore) {
