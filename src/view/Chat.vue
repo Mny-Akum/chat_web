@@ -9,16 +9,18 @@
         <ul>
           <div class="usercss">群组聊天( 当前人数：{{ userCount }} )</div>
           <li @click="choiceUser()" >
+           
             <div :class="groupHint.open?'currentcss':''" class="usercss" style="text-align: center;line-height: 4rem;">群组聊天</div>
           </li>
         </ul>
         <ul>
           <div class="usercss" @click="useropen=!useropen">用户列表</div>
+         
           <li :class="[item.online ? 'isLine' : 'notLine',chatUser.username==emailMap[item.email].username?'currentcss':'']" v-for="(item, index) in userlist" :key="index"
-            @click="choiceUser(item)" v-if="useropen"  class="usercss itemcss"> 
-              <img :src="emailMap[item.email].avatar||'https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa'" class="avatarcss" :class="emailMap[item.email]?.messagePrompt?'avatarcss2':'avatarcss'">
+            @click="choiceUser(item)" v-if="useropen"  class="usercss itemcss">
+            <Levitation :PersonalHomepage="item" height="21rem" width="18rem"></Levitation>
+              <img :src="getUserAvatar(item.email)" class="avatarcss" :class="emailMap[item.email]?.messagePrompt?'avatarcss2':'avatarcss'">
               {{ item.username }}
-           
           </li>
         </ul>
       </main>
@@ -57,6 +59,7 @@
 <script>
 let socket;
 import MyCat from '@/components/MyCat.vue';
+import Levitation from '@/components/Levitation.vue';
 import { getUserList, getMessageList } from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
 import { getRandomNum } from '@/utils/utils'
@@ -64,7 +67,8 @@ export default {
   name: 'chat',
   components: {
     MyCat,
-    ChatLoading
+    ChatLoading,
+    Levitation
   },
   data() {
     return {
@@ -231,7 +235,8 @@ export default {
             delete item.password
             map[item.email] = {
               username: item.username,
-              avatar: item.avatar
+              avatar: item.avatar,
+              levopen:false
             }
             item.online = onlineUser.has(item.email)
           })
@@ -381,8 +386,7 @@ export default {
       }
 
     },
-    current(item){
-    }
+
   }
 }
 </script>
@@ -651,6 +655,7 @@ ul {
 }
 .itemcss{
   display: flex;
+  position: relative;
   line-height: 4rem;
 }
 //头像样式
