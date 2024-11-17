@@ -377,7 +377,7 @@ uploadTime:""
 
 type:""  (1:image,2:file)
 
-localStore:"" (生成uuid存储)
+uuid:"" (生成uuid存储)
 
 from:""
 
@@ -386,3 +386,4 @@ to:""
 }
 
 增，删，查
+
