@@ -2,26 +2,31 @@
   <div class="main">
     <div id="box">
       <div class="app">
-        <!-- <MyCat /> -->
+        <MyCat />
       </div>
-      <main id="left">
+      <el-main id="left">
         
-        <ul>
-          <div class="usercss">群组聊天( 当前人数：{{ userCount }} )</div>
-          <li @click="choiceUser()" >
-            <div :class="groupHint.open?'currentcss':''" class="usercss" style="text-align: center;line-height: 4rem;">群组聊天</div>
-          </li>
-        </ul>
-        <ul>
-          <div class="usercss" @click="useropen=!useropen">用户列表</div>
-          <li :class="[item.online ? 'isLine' : 'notLine',chatUser.username==emailMap[item.email].username?'currentcss':'']" v-for="(item, index) in userlist" :key="index"
-            @click="choiceUser(item)" v-if="useropen"  class="usercss itemcss"> 
-              <img :src="emailMap[item.email].avatar||'https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa'" class="avatarcss" :class="emailMap[item.email]?.messagePrompt?'avatarcss2':'avatarcss'">
+        <div class="leftList">
+          <div class="userListStyle">群组聊天( 当前人数：{{ userCount }} )</div>
+          <div class="leftItem" @click="choiceUser()" :class="{'currentCss':chatUser.email=='group'}">
+            <div  style="text-align: center;line-height: 4rem;">群组聊天</div>
+          </div>
+        </div>
+
+        <div class="leftList">
+          <div class="userListStyle" @click="userlistOpen=!userlistOpen">用户列表</div>
+          <div class="leftItem" :class="{
+            'currentCss':chatUser.email==item.email,
+            'isLine' : item.online,
+            'notLine' : !item.online}" 
+            v-for="(item, index) in userlist" :key="index"
+            @click="choiceUser(item)" v-show="userlistOpen" > 
+              <img :src="getUserAvatar(item.email)" class="avatarCss" :class="emailMap[item.email]?.messagePrompt?'avatarCss2':'avatarCss'">
               {{ item.username }}
-           
-          </li>
-        </ul>
-      </main>
+          </div>
+        </div>
+
+      </el-main>
 
       <div id="right">
         <!-- 显示当前对话的用户 -->
@@ -56,7 +61,7 @@
 </template>
 <script>
 let socket;
-import MyCat from '@/components/myChat/MyCat.vue';
+import MyCat from '@/components/myCat/MyCat.vue';
 import { getUserList, getMessageList } from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
 import { getRandomNum } from '@/utils/utils'
@@ -68,12 +73,11 @@ export default {
   },
   data() {
     return {
-      useropen:false,
+      userlistOpen:false,
       //群组
       groupHint:{
         num:0,
-        messagePrompt:false,
-        open:false,
+        messagePrompt:false
       },
       ip: "",
       sendMessage: "",
@@ -94,10 +98,6 @@ export default {
     chatUser: {
       deep: true,
       handler({ email, username, type }) {
-          this.groupHint.open=false  
-        if(type=='group'){
-          this.groupHint.open=true
-        }
         this.getStoreMessage({
           to: email,
           from: this.username,
@@ -151,12 +151,14 @@ export default {
             this.userCount = data.count
           } else {
             if (data.type == "group") {
+              //群组消息提示
               if(this.chatUser.email!="group"){
                 this.groupHint.messagePrompt = true
                 this.groupHint.num++
               }
               this.addMessageList(data.to, data)
             } else {
+              //用户列表消息提示
               if(this.chatUser.username!=this.emailMap[data.from]?.username){
               this.$set(this.emailMap[data.from],'messagePrompt',true)
             }
@@ -247,7 +249,6 @@ export default {
     //通过email获取头像
     getUserAvatar(email) {
       let avatar = this.emailMap[email]?.avatar ? this.emailMap[email].avatar : 'http://'+this.ip+"/chat/file/download/1/98859171c9c04d3897b1dc857185b738"
-      // 'https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa'
       return avatar
     },
     //通过email获取名字
@@ -414,32 +415,60 @@ export default {
 }
 
 #left {
-  /* background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); */
+  background: linear-gradient(120deg, #e0c3fc88 0%, #8ec5fc88 100%); 
   width: 20%;
   padding: 1.5rem;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   /* 亚卡力效果 */
-  backdrop-filter: blur(0.85rem);
+  backdrop-filter: blur(3rem);
   // overflow: hidden;
-}
+  .userListStyle{
+  width: 28rem;
+  height: 4rem; 
+  }
+  //头像样式
+  .avatarCss{
+    border-radius:50%;
+    margin-right: 1vw;
+    box-sizing: border-box;
+    animation: ani 2s linear infinite;
+  }
+  .avatarCss2{
+    animation: hiteani 0.8s linear infinite;
+  }
+  .currentCss{
+    // background: radial-gradient(circle at 32.2% 83.5%, rgb(239, 167, 167) 0%, rgb(215, 123, 191) 90%) !important;
+    backdrop-filter: blur(10rem);
+    background: none !important;
+  }
+  .leftList{
+    line-height: 4rem;
+    margin: 0;
+    padding: 0;
+  }
+  .leftList .leftItem {
+    margin: 0.6rem 0;
+    padding: 0.25rem 1rem;
+    /* display: inline-block; */
+    width: calc(100% - 2rem);
+    height: 4rem; 
+    display: flex;
+    line-height: 4rem;
+  }
 
-#left ul li {
-  margin: 0.6rem 0;
-  padding: 0.25rem 1rem;
-  /* display: inline-block; */
+  .leftList .leftItem:hover {
+    background: rgba(247, 137, 137, 0.274);
+  }
 
-}
+  .isLine {
+    color: black;
+    font-weight: 800;
+  }
 
-.isLine {
-  color: black;
-}
+  .notLine {
+    color: #333;
+  }
 
-.notLine {
-  color: #666;
-}
-
-#left ul li:hover {
-  background: rgba(247, 137, 137, 0.274);
 }
 
 ul {
@@ -645,37 +674,16 @@ ul {
 
 #chatBody {
 
-  // color: #8ec5fc
 
 }
-.usercss{
- width: 28rem;
- height: 4rem; 
-}
-.itemcss{
-  display: flex;
-  line-height: 4rem;
-}
-//头像样式
-.avatarcss{
-  border-radius:50%;
-  margin-right: 2rem;
-  box-sizing: border-box;
-  animation: ani 2s linear infinite;
-}
-.avatarcss2{
-  animation: hiteani 0.8s linear infinite;
-}
-.currentcss{
-  background: radial-gradient(circle at 32.2% 83.5%, rgb(239, 167, 167) 0%, rgb(215, 123, 191) 90%)
-}
+//滚动条
 @supports (scrollbar-color: auto) {
-  #chatBody {
+  #chatBody,#left {
     scrollbar-color: rgba(0, 0, 0, 0) rgba(255, 154, 150, 0);
     transition: scrollbar-color 0.2s linear;
   }
 
-  #chatBody:hover {
+  #chatBody:hover,#left {
     scrollbar-color: rgb(124, 213, 255) rgba(255, 136, 136, 0);
   }
 }
