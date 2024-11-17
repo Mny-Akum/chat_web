@@ -2,17 +2,24 @@
   <div class="main">
     <div id="box">
       <div class="app">
-        <MyCat />
+        <!-- <MyCat /> -->
       </div>
       <main id="left">
+        
         <ul>
-          <div>群组聊天( 当前人数：{{ userCount }} )</div>
-          <li @click="choiceUser()">群组聊天</li>
+          <div class="usercss">群组聊天( 当前人数：{{ userCount }} )</div>
+          <li @click="choiceUser()" >
+            <div :class="groupHint.open?'currentcss':''" class="usercss" style="text-align: center;line-height: 4rem;">群组聊天</div>
+          </li>
         </ul>
         <ul>
-          <div>用户列表：</div>
-          <li :class="item.online ? 'isLine' : 'notLine'" v-for="(item, index) in userlist" :key="index"
-            @click="choiceUser(item)">{{ item.username }}</li>
+          <div class="usercss" @click="useropen=!useropen">用户列表</div>
+          <li :class="[item.online ? 'isLine' : 'notLine',chatUser.username==emailMap[item.email].username?'currentcss':'']" v-for="(item, index) in userlist" :key="index"
+            @click="choiceUser(item)" v-if="useropen"  class="usercss itemcss"> 
+              <img :src="emailMap[item.email].avatar||'https://tse1-mm.cn.bing.net/th/id/OIP-C.WKDEAgwE4K8yFVjobmQzqgHaHa'" class="avatarcss" :class="emailMap[item.email]?.messagePrompt?'avatarcss2':'avatarcss'">
+              {{ item.username }}
+           
+          </li>
         </ul>
       </main>
 
@@ -61,6 +68,13 @@ export default {
   },
   data() {
     return {
+      useropen:false,
+      //群组
+      groupHint:{
+        num:0,
+        messagePrompt:false,
+        open:false,
+      },
       ip: "",
       sendMessage: "",
       chatUser: {},
@@ -80,6 +94,10 @@ export default {
     chatUser: {
       deep: true,
       handler({ email, username, type }) {
+          this.groupHint.open=false  
+        if(type=='group'){
+          this.groupHint.open=true
+        }
         this.getStoreMessage({
           to: email,
           from: this.username,
@@ -89,7 +107,7 @@ export default {
         })
         this.scrollFun("send")
       }
-    }
+    },
   },
   mounted() {
     document.title = "聊天室"
@@ -133,8 +151,15 @@ export default {
             this.userCount = data.count
           } else {
             if (data.type == "group") {
+              if(this.chatUser.email!="group"){
+                this.groupHint.messagePrompt = true
+                this.groupHint.num++
+              }
               this.addMessageList(data.to, data)
             } else {
+              if(this.chatUser.username!=this.emailMap[data.from]?.username){
+              this.$set(this.emailMap[data.from],'messagePrompt',true)
+            }
               this.addMessageList(data.from, data)
             }
           }
@@ -243,6 +268,7 @@ export default {
       this.sendMessage = ""
       if (item) {
         this.chatUser = { username: item.username, email: item.email, type: 'single' }
+        this.emailMap[item.email].messagePrompt = false;
       } else {
         this.chatUser = { username: "群组聊天", email: "group", type: 'group' }
       }
@@ -357,6 +383,8 @@ export default {
         })
       }
 
+    },
+    current(item){
     }
   }
 }
@@ -388,14 +416,15 @@ export default {
 #left {
   /* background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); */
   width: 20%;
-  padding: 2.5rem;
+  padding: 1.5rem;
   font-size: 1.2rem;
   /* 亚卡力效果 */
   backdrop-filter: blur(0.85rem);
+  // overflow: hidden;
 }
 
 #left ul li {
-  margin: 0.6rem;
+  margin: 0.6rem 0;
   padding: 0.25rem 1rem;
   /* display: inline-block; */
 
@@ -410,11 +439,12 @@ export default {
 }
 
 #left ul li:hover {
-  background: rgba(55, 55, 55, 0.1);
+  background: rgba(247, 137, 137, 0.274);
 }
 
 ul {
   list-style: none;
+  overflow: hidden;
 }
 
 #right {
@@ -618,7 +648,27 @@ ul {
   // color: #8ec5fc
 
 }
-
+.usercss{
+ width: 28rem;
+ height: 4rem; 
+}
+.itemcss{
+  display: flex;
+  line-height: 4rem;
+}
+//头像样式
+.avatarcss{
+  border-radius:50%;
+  margin-right: 2rem;
+  box-sizing: border-box;
+  animation: ani 2s linear infinite;
+}
+.avatarcss2{
+  animation: hiteani 0.8s linear infinite;
+}
+.currentcss{
+  background: radial-gradient(circle at 32.2% 83.5%, rgb(239, 167, 167) 0%, rgb(215, 123, 191) 90%)
+}
 @supports (scrollbar-color: auto) {
   #chatBody {
     scrollbar-color: rgba(0, 0, 0, 0) rgba(255, 154, 150, 0);
@@ -628,5 +678,39 @@ ul {
   #chatBody:hover {
     scrollbar-color: rgb(124, 213, 255) rgba(255, 136, 136, 0);
   }
+}
+@keyframes ani {
+   0%{
+        box-shadow: 0 0 0px hsl(0, 94%, 60%)
+   }
+   25%{
+        box-shadow: 0 0 0.8rem #ff8329
+   }
+    50%{
+        box-shadow: 0 0 1.6rem #a4b239ac
+   }
+   75%{
+        box-shadow: 0 0 0.8rem #5bff29
+   }
+   100%{
+    box-shadow: 0 0 0px #ff8329
+   }
+}
+@keyframes hiteani {
+   0%{
+        box-shadow: 0 0 1.5rem hsl(0, 94%, 60%)
+   }
+   25%{
+        box-shadow: 0 0 2.5rem #ff8329
+   }
+    50%{
+        box-shadow: 0 0 3.5rem #a4b239ac
+   }
+   75%{
+        box-shadow: 0 0 2.5rem #5bff29
+   }
+   100%{
+    box-shadow: 0 0 1.5rem #ff8329
+   }
 }
 </style>
