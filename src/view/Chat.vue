@@ -2,7 +2,7 @@
   <div class="main">
     <div id="box">
       <div class="app">
-        <MyCat />
+        <!-- <MyCat /> -->
       </div>
       <main id="left">
         <ul>
@@ -83,7 +83,7 @@
 </template>
 <script>
 let socket;
-import MyCat from "@/components/MyCat.vue";
+// import MyCat from "@/components/MyCat.vue";
 import { getUserList, getMessageList } from "@/api/api";
 import ChatLoading from "@/components/ChatLoading.vue";
 import { getRandomNum } from "@/utils/utils";
@@ -93,7 +93,6 @@ import "font-awesome/css/font-awesome.min.css";
 export default {
   name: "chat",
   components: {
-    MyCat,
     ChatLoading,
   },
   data() {
@@ -118,9 +117,6 @@ export default {
     chatUser: {
       deep: true,
       handler({ email, username, type }) {
-        console.log(this.messageList);
-        console.log(email);
-        console.log(this.messageList.page[email]);
         this.getStoreMessage({
           to: email,
           from: this.username,
@@ -174,6 +170,7 @@ export default {
           console.log("websocket已打开");
         };
         socket.onmessage = (msg) => {
+          console.log(this.emailMap);
           let data = JSON.parse(msg.data);
           if (data.type == "system") {
             this.getUserList(data.users);
@@ -268,6 +265,7 @@ export default {
             item.online = onlineUser.has(item.email);
           });
           this.emailMap = map;
+          console.log("map", map);
           this.userlist = arr;
         })
         .catch((error) => {
@@ -460,42 +458,66 @@ export default {
 }
 
 #left {
-  /* background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%); */
+  background: linear-gradient(120deg, #e0c3fc88 0%, #8ec5fc88 100%);
   width: 20%;
-  padding: 2.5rem;
-  font-size: 1.2rem;
-  /* 亚克力效果 */
-  backdrop-filter: blur(0.85rem);
-}
+  padding: 1.5rem;
+  font-size: 1.3rem;
+  /* 亚卡力效果 */
+  backdrop-filter: blur(3rem);
+  // overflow: hidden;
+  .userListStyle {
+    width: 28rem;
+    height: 4rem;
+  }
+  //头像样式
+  .avatarCss {
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    margin-right: 1vw;
+    box-sizing: border-box;
+    // animation: ani 2s linear infinite;
+  }
+  .avatarCss2 {
+    animation: hiteani 0.8s linear infinite;
+  }
+  .currentCss {
+    // background: radial-gradient(circle at 32.2% 83.5%, rgb(239, 167, 167) 0%, rgb(215, 123, 191) 90%) !important;
+    backdrop-filter: blur(10rem);
+    background: none !important;
+  }
+  .leftList {
+    line-height: 4rem;
+    margin: 0;
+    padding: 0;
+  }
+  .leftList .leftItem {
+    margin: 0.6rem 0;
+    padding: 0.25rem 1rem;
+    /* display: inline-block; */
+    width: calc(100% - 2rem);
+    height: 4rem;
+    display: flex;
+    line-height: 4rem;
+  }
 
-#left ul li {
-  margin: 0.6rem;
-  padding: 0.25rem 1rem;
-  /* display: inline-block; */
-}
+  .leftList .leftItem:hover {
+    background: rgba(247, 137, 137, 0.274);
+  }
 
-.isLine {
-  color: green;
-}
+  .isLine {
+    color: black;
+    font-weight: 800;
+  }
 
-.notLine {
-  color: gray;
-}
-
-#left ul li:hover {
-  background: rgba(55, 55, 55, 0.1);
+  .notLine {
+    color: #333;
+  }
 }
 
 ul {
   list-style: none;
-  padding: 0;
-  font-weight: bold;
-}
-li {
-  font-weight: bold;
-  cursor: pointer;
-  padding: 8rem;
-  font-size: 16px;
+  overflow: hidden;
 }
 
 #right {
@@ -736,15 +758,51 @@ li {
 #chatBody {
   // color: #8ec5fc
 }
-
+//滚动条
 @supports (scrollbar-color: auto) {
-  #chatBody {
+  #chatBody,
+  #left {
     scrollbar-color: rgba(0, 0, 0, 0) rgba(255, 154, 150, 0);
     transition: scrollbar-color 0.2s linear;
   }
 
-  #chatBody:hover {
+  #chatBody:hover,
+  #left {
     scrollbar-color: rgb(124, 213, 255) rgba(255, 136, 136, 0);
+  }
+}
+@keyframes ani {
+  0% {
+    box-shadow: 0 0 0px hsl(0, 94%, 60%);
+  }
+  25% {
+    box-shadow: 0 0 0.8rem #ff8329;
+  }
+  50% {
+    box-shadow: 0 0 1.6rem #a4b239ac;
+  }
+  75% {
+    box-shadow: 0 0 0.8rem #5bff29;
+  }
+  100% {
+    box-shadow: 0 0 0px #ff8329;
+  }
+}
+@keyframes hiteani {
+  0% {
+    box-shadow: 0 0 1.5rem hsl(0, 94%, 60%);
+  }
+  25% {
+    box-shadow: 0 0 2.5rem #ff8329;
+  }
+  50% {
+    box-shadow: 0 0 3.5rem #a4b239ac;
+  }
+  75% {
+    box-shadow: 0 0 2.5rem #5bff29;
+  }
+  100% {
+    box-shadow: 0 0 1.5rem #ff8329;
   }
 }
 button:hover {
