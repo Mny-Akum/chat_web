@@ -21,7 +21,6 @@
 <style scoped>
 .all{
     background: black;
-    position: absolute;
     top: 0;
     left: 5.5rem;
 }

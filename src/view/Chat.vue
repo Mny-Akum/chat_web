@@ -61,7 +61,7 @@
 </template>
 <script>
 let socket;
-import MyCat from '@/components/MyCat.vue';
+import MyCat from '@/components/myCat/MyCat.vue';
 import Levitation from '@/components/Levitation.vue';
 import { getUserList, getMessageList } from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
