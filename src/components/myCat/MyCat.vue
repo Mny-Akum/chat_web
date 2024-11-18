@@ -37,10 +37,10 @@ export default {
       checkImage:require('./img/isMygo.png'),
       // 菜单项数组，包含链接和背景图片
       menuItems: [
-        { path: '#', image: require('./img/02.png'),icon:"",text:"更多",title:"小猫，你可以演奏春日影"},
+        { path: '#', image: require('./img/02.png'),icon:"",text:"更多",title:"小猫,你可以演奏春日影"},
         { path: '#', image: require('./img/03.png'),icon:"",text:"音乐",title:"一阵强劲的鼓点响起"},
-        { path: '#', image: require('./img/04.png'),icon:"",text:"聊天",title:"说谁唐呢，Anon世界第一可爱"},
-        { path: '#', image: require('./img/05.png'),icon:"",text:"主页",title:"一定要组一辈子工坊啊"},
+        { path: '/chat', image: require('./img/04.png'),icon:"",text:"聊天",title:"说谁唐呢,Anon世界第一可爱"},
+        { path: '/user', image: require('./img/05.png'),icon:"",text:"主页",title:"哦内该,一定要组一辈子工坊啊"},
         { path: '/login', image: require('./img/06.png'),icon:"",text:"退出",title:"长期素食导致的"},
       ]
     };
@@ -50,9 +50,21 @@ export default {
   },
   methods: {
     toItem(item){
+      let route = this.$route
+      if(item == route.path){
+        return
+      }
+      if(route.name == "login" || route.path == "/login"){
+        this.$message({type:"warning",message:"请先登录"})
+        return
+      }
       if(item == '/login'){
         localStorage.setItem("autoLogin",false)
         this.$router.replace(item)
+      }else if(item == "/user"){
+        this.$router.push(item)
+      }else if(item == "/chat"){
+        this.$router.push(item)
       }
     },
     openMenu(){

@@ -2,7 +2,7 @@
   <div class="main">
     <div id="box">
       <div class="app">
-        <MyCat />
+        <!-- <MyCat /> -->
       </div>
       <el-main id="left">
         

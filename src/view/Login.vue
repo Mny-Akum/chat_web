@@ -179,7 +179,7 @@ export default {
         //初始化操作
         init() {
             document.title = "欢迎来到App外包工坊"
-            document.documentElement.style.fontSize = document.documentElement.clientHeight / 1080 * 13 + 'px'
+            document.documentElement.style.fontSize = document.documentElement.clientHeight / 957 * 12 + 'px'
             this.ip = (this.ip ? this.ip : localStorage.getItem('ip'))
             localStorage.setItem('ip', this.ip)
             this.$axios.defaults.baseURL = 'http://' + this.ip
