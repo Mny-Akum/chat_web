@@ -19,9 +19,7 @@
     <script src="../live2dw/lib/L2Dwidget.min.js"></script>
 </head>
 
-
 <body onload="sampleApp1()">
-
 
     <!-- 大盒子 -->
     <div class="bg">
@@ -31,7 +29,7 @@
             <label for="cover-upload" class="button">
                 <svg t="1731836452494" viewBox="0 -165 800 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="910" width="20" height="20">
                     <path d="M128 853.333333h768.064L896 170.666667H127.936L128 853.333333zM127.936 128h768.128C919.594667 128 938.666667 146.986667 938.666667 170.666667v682.666666c0 23.573333-19.029333 42.666667-42.602667 42.666667H127.936A42.56 42.56 0 0 1 85.333333 853.333333V170.666667c0-23.573333 19.029333-42.666667 42.602667-42.666667z m200.128 527.082667c22.890667-19.626667 68.48-36.416 98.794667-36.416h20.949333c40.533333 0 95.914667-20.437333 126.549333-46.698667l52.373334-44.885333c22.890667-19.626667 68.48-36.416 98.794666-36.416H810.666667a21.333333 21.333333 0 0 0 0-42.666667h-85.12c-40.533333 0-95.936 20.437333-126.570667 46.698667l-52.373333 44.885333C523.690667 559.210667 478.165333 576 447.786667 576h-20.949334c-40.490667 0-95.914667 20.437333-126.549333 46.698667L199.445333 709.12a21.333333 21.333333 0 1 0 27.776 32.384l100.842667-86.442667z" fill="#ffffff" p-id="911"></path>
-                    <path d="M352 373.333333m-53.333333 0a53.333333 53.333333 0 1 0 106.666666 0 53.333333 53.333333 0 1 0-106.666666 0Z" fill="#ffffff" p-id="912"></path>
+                    <path d="M352 373.333333m-53.333333 0a53.333333 53.333333 0 1 0 106.666666 0 53.333333 53.333333 0 1 0-106.666666 0Z" fill="#ffffff" p-id="912" ></path>
                 </svg>
                 <span>上传封面图片</span>
             </label>
@@ -47,14 +45,14 @@
                 <div class="profile-circle" onclick="document.getElementById('fileInput').click();">
                     <span>更换头像</span>
                 </div>
-                
                 <!-- 隐藏的文件选择器 -->
                 <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileChange(event)">
             </div>
          </div>
          
 
-        <!-- <div class="text">
+         <!-- 个性签名 -->
+        <div class="text">
             <form action="">
                 <label for="story">Tell us your story:</label>
 
@@ -62,7 +60,7 @@
                 It was a dark and stormy night...
                 </textarea>
             </form>
-        </div> -->
+        </div>
             
 
         <div class="muc">
@@ -135,8 +133,6 @@
 			</div>
 		</div>
         
-
-
          <div class="danmu-container">
         <!-- 游戏 -->
             <!-- <div id="game">
@@ -169,13 +165,16 @@
         </div>
          
             <div class="input-container">
-			<input type="text" id="danmuInput" placeholder="输入弹幕">
-            <button id="sendDanmu">发送</button>
+                <div class="InputAlice">
+                    <img src="../public/img/alxwxt.png"  alt="">
+                </div>
+                <input type="text" id="danmuInput"  placeholder="输入弹幕">
+            <div class="Elysia">
+                <img src="../public/img/Elysia.jpg" alt="">
+            </div>
+			<button id="sendDanmu"  style="color: #FFE791;">发送</button>
             <div class="bu" id="b1">₯</div>
          
-            
-    
-
         <!-- Yuzi Picture --> 
         <div id="cont">
             			
@@ -212,12 +211,7 @@
 
     </div>
 
-
-
-
-
 <!-- 对话框 -->
-
 
 <!-- Import Live2D -->
 <script>
@@ -285,10 +279,10 @@ window.onload = function(){
 });
         }
     );
-
-
 </script>
+
 <script type="text/javascript" src="./js/iconfont.js"></script>
 <script type="text/javascript" src="./js/music.js"></script>
+
 </body>
 </html>

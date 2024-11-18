@@ -44,10 +44,14 @@ body {
 	position: absolute;
 	left: 110px;
 	top: -50px;
-	
+	background-color: transparent;
+	backdrop-filter: blur(5px);
+	border-image: linear-gradient(to right, #686b80 50%, #efb181 50%);
+    border-image-slice: 1; /* 使用整个渐变 */
 	font-size: 17px;
-	border-radius: 15px;
+	/* border-radius: 15px; */
 }
+
 
 .input-container button {
 	position: absolute;
@@ -57,12 +61,56 @@ body {
 	padding: 7px;
 	font-size: 10px;
 	margin-bottom: 50px;
+	background-color: transparent;
+	border: transparent;
 }
 
-/* label,
+.InputAlice img{
+	width: 200px;
+	position: absolute;
+	left: 125px;
+	top: -105px;
+}
+
+.Elysia img{
+	width: 60px;
+	position: absolute;
+	top: -70px;
+	left: 328px;
+	/* position: relative; */
+    cursor: pointer;
+}
+
+ #sendDanmu:hover::after{
+	content: "发送"; /* 显示的文字 */
+        position: absolute;
+        bottom: 100%; /* 提示文字在图片上方 */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8); /* 背景色 */
+        color: #fff; /* 文字颜色 */
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap; /* 避免文字换行 */
+        z-index: 10;
+}
+
+label,
 textarea {
   font-size: 0.8rem;
   letter-spacing: 1px;
+} 
+
+#story {
+	position: relative;
+	width: 100%; /* 根据需要调整宽度 */
+	height: 150px; /* 根据需要调整高度 */
+	background: url('../img/Lion.png') no-repeat right bottom; /* 图片放置在右下角 */
+	backdrop-filter: blur(5px);
+	background-size: 150px 100px; /* 调整图片大小 */
+	padding: 10px; /* 确保文字不覆盖图片 */
+	resize: none; /* 可选：禁止用户调整文本域大小 */
 }
 
 textarea {
@@ -83,4 +131,4 @@ label {
 position: absolute;
 left: 100px;
 top: 320px;
-} */
+}

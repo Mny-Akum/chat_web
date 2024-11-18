@@ -11,15 +11,6 @@ html  {
 }
 
 
-.music-content {
-    /* height: 100%; */
-    /* backdrop-filter: blur(5px); */
-    /* display: flex; */
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* overflow: hidden; */
-}
-
 .music-box {
     flex: none;
     width: 389px;
@@ -37,7 +28,7 @@ html  {
     user-select: none;
     position: absolute;
     top: 320px;
-    left: 100px;
+    left: 600px;
 }
 
 /* music-box 上部分 */
