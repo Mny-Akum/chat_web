@@ -91,11 +91,6 @@ export default {
   padding: 0;
 }
 
-body {
-  background-size: cover;
-  height: 100vh;
-}
-
 .menu {
   position: absolute;
   width: 60px;
@@ -124,6 +119,9 @@ body {
 
 /* 中间按钮的样式 */
 .custom-toggler {
+  background-position: center;
+  background-position-y: -2px;
+  /* 水平和垂直居中 */
   position: absolute;
   display: block;
   top: 0;
@@ -132,13 +130,10 @@ body {
   right: 0;
   margin: auto;
   width: 60px;
-  /* Adjust to fit your custom image */
   height: 60px;
-  /* Adjust to fit your custom image */
   background-size: cover;
-  background-position-y: 20vh;
   cursor: pointer;
-  border-radius: 40%;
+  border-radius: 30%;
   z-index: 1;
 }
 
@@ -146,27 +141,28 @@ body {
   opacity: 1;
 }
 
+/* 第二个数据可以修改外围离中心按钮的距离 */
 .menu-toggler:checked~ul .menu-item:nth-child(1) {
-  transform: rotate(0deg) translateX(-110px);
+  transform: rotate(0deg) translateX(-80px);
 }
 
 .menu-toggler:checked~ul .menu-item:nth-child(2) {
-  transform: rotate(72deg) translateX(-110px);
+  transform: rotate(72deg) translateX(-80px);
   /* Changed to 72deg for 5 items */
 }
 
 .menu-toggler:checked~ul .menu-item:nth-child(3) {
-  transform: rotate(144deg) translateX(-110px);
+  transform: rotate(144deg) translateX(-80px);
   /* Changed to 144deg */
 }
 
 .menu-toggler:checked~ul .menu-item:nth-child(4) {
-  transform: rotate(216deg) translateX(-110px);
+  transform: rotate(216deg) translateX(-80px);
   /* Changed to 216deg */
 }
 
 .menu-toggler:checked~ul .menu-item:nth-child(5) {
-  transform: rotate(288deg) translateX(-110px);
+  transform: rotate(288deg) translateX(-80px);
   /* Changed to 288deg */
 }
 
