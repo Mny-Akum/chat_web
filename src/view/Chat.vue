@@ -147,6 +147,8 @@ export default {
           console.log("websocket已打开");
         };
         socket.onmessage = (msg) => {
+          
+          console.log(this.emailMap)
           let data = JSON.parse(msg.data);
           if (data.type == "system") {
             this.getUserList(data.users)
@@ -161,9 +163,10 @@ export default {
               this.addMessageList(data.to, data)
             } else {
               //用户列表消息提示
-              if(this.chatUser.username!=this.emailMap[data.from]?.username){
-              this.$set(this.emailMap[data.from],'messagePrompt',true)
-            }
+              console.log(data)
+              if(this.chatUser.email != data.from){
+                this.$set(this.emailMap[data.from],'messagePrompt',true)
+              }
               this.addMessageList(data.from, data)
             }
           }
@@ -242,6 +245,7 @@ export default {
             item.online = onlineUser.has(item.email)
           })
           this.emailMap = map
+          console.log('map',map)
           this.userlist = arr
         }).catch(error => {
           localStorage.setItem("autoLogin", false);
@@ -430,10 +434,12 @@ export default {
   }
   //头像样式
   .avatarCss{
+    height: 4rem; 
+    width: 4rem;
     border-radius:50%;
     margin-right: 1vw;
     box-sizing: border-box;
-    animation: ani 2s linear infinite;
+    // animation: ani 2s linear infinite;
   }
   .avatarCss2{
     animation: hiteani 0.8s linear infinite;

@@ -1,6 +1,6 @@
 <template>
   <!-- 导航菜单组件，支持拖拽和点击展开隐藏 -->
-  <nav class="menu">
+  <nav class="menu" id="menu">
     
     <input type="checkbox" class="menu-toggler"  v-model="isMenuOpen" />
     <!-- 自定义的菜单切换器图标 -->
@@ -39,7 +39,7 @@ export default {
       menuItems: [
         { path: '#', image: require('./img/02.png'),icon:"",text:"更多",title:"小猫，你可以演奏春日影"},
         { path: '#', image: require('./img/03.png'),icon:"",text:"音乐",title:"一阵强劲的鼓点响起"},
-        { path: '#', image: require('./img/04.png'),icon:"",text:"聊天",title:"说谁唐呢，Anon第一可爱"},
+        { path: '#', image: require('./img/04.png'),icon:"",text:"聊天",title:"说谁唐呢，Anon世界第一可爱"},
         { path: '#', image: require('./img/05.png'),icon:"",text:"主页",title:"一定要组一辈子工坊啊"},
         { path: '/login', image: require('./img/06.png'),icon:"",text:"退出",title:"长期素食导致的"},
       ]
@@ -100,11 +100,11 @@ export default {
       document.removeEventListener('mousemove',this.onDrag);
       for(let i = 0; i < menuItems.length; i++){
         let item = menuItems[i];
-        if(this.storageOpen){
-          item.style.opacity = 0
-        }else{
-          item.style.opacity = 1
-        }
+        // if(this.storageOpen){
+        //   item.style.opacity = 0
+        // }else{
+        //   item.style.opacity = 1
+        // }
         item.style.left = this.position.x + 'px'
         item.style.top = this.position.y + 'px'
       }
@@ -113,7 +113,7 @@ export default {
       this.isMenuOpen = this.storageOpen
     },
     //鼠标移入事件：
-    showCat(event){
+    showCat(){
       if (this.dragging) return;
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
@@ -121,8 +121,6 @@ export default {
       const height = this.$el.offsetHeight;
       const maxX = windowWidth - width;
       const maxY = windowHeight - height;
-
-      console.log(windowWidth, windowHeight);
 
       // 确保菜单不会移出视窗
       if (this.position.x < 5) this.position.x = 0;
@@ -276,7 +274,9 @@ body {
   width: 5rem;
   height: 5rem;
   opacity: 0;
-  transition: transform  0.2s , opacity 0.5s , left calc(0.01s + 0.01s * var(--i)) , top calc(0.01s + 0.01s * var(--i));
+  transition: transform  0.2s , opacity 0.5s ;
+  
+  /* left calc(0.01s + 0.01s * var(--i)) , top calc(0.01s + 0.01s * var(--i)); */
   z-index: 1;
   border-radius: 50%;
   /* backdrop-filter: blur(0.1rem); */
