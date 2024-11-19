@@ -1,57 +1,79 @@
 <template>
   <div>
+    <!-- 个人封面 -->
+    <Live2d/>
     <div class="bg">
-        <!-- 个人封面 -->
-        <Live2d/>
-        <!-- 模糊背景 -->
-        <div class="banner">
-            <div class="user-cover">
-                <label for="cover-upload" class="button">
-                    <svg t="1731836452494"  viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="910">
-                        <path d="M128 853.333333h768.064L896 170.666667H127.936L128 853.333333zM127.936 128h768.128C919.594667 128 938.666667 146.986667 938.666667 170.666667v682.666666c0 23.573333-19.029333 42.666667-42.602667 42.666667H127.936A42.56 42.56 0 0 1 85.333333 853.333333V170.666667c0-23.573333 19.029333-42.666667 42.602667-42.666667z m200.128 527.082667c22.890667-19.626667 68.48-36.416 98.794667-36.416h20.949333c40.533333 0 95.914667-20.437333 126.549333-46.698667l52.373334-44.885333c22.890667-19.626667 68.48-36.416 98.794666-36.416H810.666667a21.333333 21.333333 0 0 0 0-42.666667h-85.12c-40.533333 0-95.936 20.437333-126.570667 46.698667l-52.373333 44.885333C523.690667 559.210667 478.165333 576 447.786667 576h-20.949334c-40.490667 0-95.914667 20.437333-126.549333 46.698667L199.445333 709.12a21.333333 21.333333 0 1 0 27.776 32.384l100.842667-86.442667z" fill="#ffffff" p-id="911"></path>
-                        <path d="M352 373.333333m-53.333333 0a53.333333 53.333333 0 1 0 106.666666 0 53.333333 53.333333 0 1 0-106.666666 0Z" fill="#ffffff" p-id="912"></path>
-                    </svg>
-                    <span>上传封面图片</span>
-                </label>
-                <!-- 隐藏的文件上传控件 -->
-                <input type="file" id="cover-upload" style="display: none;" accept="image/*" />
-            </div>
-            <div class="fixed-frame">
-                <!-- 左侧的圆形头像框 -->
-                <div class="profile-circle" onclick="document.getElementById('fileInput').click();">
-                    <span>更换头像</span>
+        <div id="page1">
+            <!-- 模糊背景 -->
+            <div class="banner">
+                <div class="user-cover">
+                    <label for="cover-upload" class="button">
+                        <svg t="1731836452494"  viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="910">
+                            <path d="M128 853.333333h768.064L896 170.666667H127.936L128 853.333333zM127.936 128h768.128C919.594667 128 938.666667 146.986667 938.666667 170.666667v682.666666c0 23.573333-19.029333 42.666667-42.602667 42.666667H127.936A42.56 42.56 0 0 1 85.333333 853.333333V170.666667c0-23.573333 19.029333-42.666667 42.602667-42.666667z m200.128 527.082667c22.890667-19.626667 68.48-36.416 98.794667-36.416h20.949333c40.533333 0 95.914667-20.437333 126.549333-46.698667l52.373334-44.885333c22.890667-19.626667 68.48-36.416 98.794666-36.416H810.666667a21.333333 21.333333 0 0 0 0-42.666667h-85.12c-40.533333 0-95.936 20.437333-126.570667 46.698667l-52.373333 44.885333C523.690667 559.210667 478.165333 576 447.786667 576h-20.949334c-40.490667 0-95.914667 20.437333-126.549333 46.698667L199.445333 709.12a21.333333 21.333333 0 1 0 27.776 32.384l100.842667-86.442667z" fill="#ffffff" p-id="911"></path>
+                            <path d="M352 373.333333m-53.333333 0a53.333333 53.333333 0 1 0 106.666666 0 53.333333 53.333333 0 1 0-106.666666 0Z" fill="#ffffff" p-id="912"></path>
+                        </svg>
+                        <span>上传封面图片</span>
+                    </label>
+                    <!-- 隐藏的文件上传控件 -->
+                    <input type="file" id="cover-upload" style="display: none;" accept="image/*" />
                 </div>
-                <!-- 隐藏的文件选择器 -->
-                <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileChange(event)">
+                <div class="fixed-frame">
+                    <!-- 左侧的圆形头像框 -->
+                    <div class="profile-circle" onclick="document.getElementById('fileInput').click();">
+                        <span>更换头像</span>
+                    </div>
+                    <!-- 隐藏的文件选择器 -->
+                    <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileChange(event)">
+                </div>
             </div>
-        </div>
-        <!-- 第一页下面功能区 -->
-        <div style="display:flex;justify-content: space-between;">
-            <!-- 左边功能列表 -->
-            <div class="toolCabinet">
-            <!-- SignIn -->
-                <div class="signIn">
-                    <div class="login">
-                        <div class="signImage">
-                            <img src="@/assets/images/user_sign.gif" alt="" />
-                        </div>
-                        <!-- 签到按钮 -->
-                        <div class="sign-button">
-                            <div class="sign-button-big">
-                                <button class="sign-button-small" id="signs">签到</button>
+            <!-- 第一页下面功能区 -->
+            <div style="display:flex;justify-content: space-between;">
+                <!-- 左边功能列表 -->
+                <div class="toolCabinet">
+                <!-- SignIn -->
+                    <div class="signIn">
+                        <div class="login">
+                            <div class="signImage">
+                                <img src="@/assets/images/user_sign.gif" alt="" />
+                            </div>
+                            <!-- 签到按钮 -->
+                            <div class="sign-button">
+                                <div class="sign-button-big">
+                                    <button class="sign-button-small" id="signs">签到</button>
+                                </div>
+                            </div>
+                            <!-- 签到记录 -->
+                            <div class="sign-logs" style="display: none;" id="signLogs">
+                                <span>已连续签到<span id="signTimes">1</span>次，<a href="../indexMenus/signlogs.html">我的签到记录</a></span>
                             </div>
                         </div>
-                        <!-- 签到记录 -->
-                        <div class="sign-logs" style="display: none;" id="signLogs">
-                            <span>已连续签到<span id="signTimes">1</span>次，<a href="../indexMenus/signlogs.html">我的签到记录</a></span>
-                        </div>
                     </div>
+                    <MusicPlayer/>
+                    <Barrage/>
                 </div>
-                <MusicPlayer/>
+                <!-- 右边功能 -->
+                <ChatCalendar style="margin-top:2rem;"/>
             </div>
-            <!-- 右边功能 -->
-            <ChatCalendar style="margin-top:2rem;"/>
+        </div>
 
+        <div id="page2">
+            <div id="cont">
+                <img src="@/assets/images/photo_wall_a.jpg" class="ima" id="a">
+                
+                <img src="@/assets/images/photo_wall_b.jpg" class="ima" id="b">
+                
+                <img src="@/assets/images/photo_wall_c.jpg" class="ima" id="c">
+                
+                <img src="@/assets/images/photo_wall_d.jpg" class="ima" id="d">
+                
+                <img src="@/assets/images/photo_wall_e.jpg" class="ima" id="e">
+                
+                <img src="@/assets/images/photo_wall_f.jpg" class="ima" id="f">
+                
+                <img src="@/assets/images/photo_wall_g.jpg" class="ima" id="g">
+                
+                <img src="@/assets/images/photo_wall_h.jpg" class="ima" id="h">
+            </div>
         </div>
     </div>
   </div>
@@ -61,6 +83,7 @@
 import Live2d from "@/components/live2d/Live2d.vue"
 import MusicPlayer from "@/components/music/MusicPlayer.vue"
 import ChatCalendar from '@/components/chatCalendar/ChatCalendar.vue'
+import Barrage from '@/components/barrage/Barrage.vue'
 export default {
     name:"UserPage",
     data(){
@@ -68,7 +91,7 @@ export default {
             
         }
     },
-    components:{MusicPlayer,Live2d,ChatCalendar},
+    components:{MusicPlayer,Live2d,ChatCalendar,Barrage},
     mounted(){
         document.documentElement.style.fontSize = document.documentElement.clientHeight / 957 * 12 + 'px'
     }
@@ -81,9 +104,13 @@ export default {
     margin: 0;
     padding: 0;
 }
-.bg {
+#page1,#page2{
+    height: 100vh;
+    overflow: hidden;
     padding-left:15vw;
     padding-right: 14vw;
+}
+.bg {
     // overflow: hidden;
     height: 200vh;
     background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
@@ -93,7 +120,7 @@ export default {
     background-attachment: fixed;
 }
 .toolCabinet{
-    height: 54.75rem;
+    height: 53.25rem;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -181,11 +208,11 @@ export default {
 }
 .signIn{
     .login{
-        backdrop-filter: blur(5rem);
+        backdrop-filter: blur(2rem);
         width: 36rem;
         height: 20rem;
-        box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2), 0 3px 1px #fff;
-        border-radius: 1rem;
+        box-shadow: inset 0px 0px 1rem 0.2rem rgb(255, 255, 255, 0.5);
+        border-radius: 2rem;
         overflow: hidden;
         .signImage {
             overflow: hidden;
@@ -193,7 +220,7 @@ export default {
             img{
                 margin: 1rem 1rem 0;
                 width: 34rem;
-                border-radius: 1rem;
+                border-radius: 2rem;
                 z-index: 11;
             }
         }
@@ -241,6 +268,58 @@ export default {
             }
         }
     }
+}
+#cont{
+    margin-top: 10vh;
+	display: grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8rem;
+    padding: 2rem;
+    .ima{
+        width: 100%;
+        padding: 10%;
+        background-color: #FFFFFF;
+        transition: transform 0.8s;
+        transform: transform 0.8s;
+    }
+    
+    .ima:hover{
+        transform: scale(1.3) rotate(0deg) !important;
+    }
+
+    #a{
+        transform: rotate(12deg);
+    }
+
+    #b{
+        transform: rotate(-5deg);
+    }
+
+    #c{
+        transform: rotate(10deg);
+    }
+
+    #d{
+        transform: rotate(8deg);
+    }
+
+    #e{
+        transform: rotate(-10deg);
+    }
+
+    #f{
+        transform: rotate(-5deg);
+    }
+
+    #g{
+        transform: rotate(10deg);
+    }
+
+    #h{
+        transform: rotate(8deg);
+    }
+
 }
 
 

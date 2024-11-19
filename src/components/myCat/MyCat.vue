@@ -194,13 +194,14 @@ body {
 }
 
 .menu {
-  position: fixed;
+  /* 让组件独立于父类，不会撑开滚动条 */
+  position: fixed; 
   width: 5rem;
   height: 5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 19;
+  z-index: 200000;
 }
 
 .menu-toggler {

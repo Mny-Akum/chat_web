@@ -183,7 +183,7 @@ html  {
     justify-content: space-between;
     align-items: center;
     padding: 2.5rem;
-    box-shadow: inset 0px 0px 10px 2px rgb(255, 255, 255, 0.5);
+    box-shadow: inset 0px 0px 1rem 0.2rem rgb(255, 255, 255, 0.5);
     user-select: none;
 }
 

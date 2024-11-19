@@ -107,7 +107,7 @@ body {
 
 .shell {
     position: relative;
-    width: 38rem;
+    width: 34rem;
     border-radius: 0 0 1rem 1rem;
     box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.2), 0 1.2rem 1rem rgba(0, 0, 0, 0.2);
 }
@@ -116,19 +116,19 @@ body {
     border-radius: 1rem 1rem 0 0;
     background: #e66b6b;
     color: #fff;
-    padding: 3rem 2rem;
+    padding: 2.3rem 1.5rem;
     background-image: url(./img/01.gif);
     background-size: cover;
 }
 
 .day {
-    font-size: 8rem;
+    font-size: 6rem;
     font-weight: 900;
     line-height: 8rem;
 }
 
 .month {
-    font-size: 4rem;
+    font-size: 3rem;
     line-height: 4rem;
 }
 
@@ -156,7 +156,7 @@ body {
     height: 4rem;
     border-radius: 50%;
     text-align: center;
-    font: 600 1.4rem '';
+    font: 600 1.2rem '';
     transition: .2s;
 }
 
@@ -182,11 +182,11 @@ body {
 }
 
 .ring-left {
-    left: 2rem;
+    left: 0.5rem;
 }
 
 .ring-right {
-    right: 2rem;
+    right: 0.5rem;
 }
 
 .ring-left:before,
@@ -196,7 +196,7 @@ body {
     box-shadow: 0 3px 1px rgba(0, 0, 0, .3), 0 -1px 1px rgba(0, 0, 0, .2);
     content: "";
     display: inline-block;
-    margin: 0.9rem;
+    margin: 0.5rem;
     height: 2.6rem;
     width: 0.9rem;
 }
