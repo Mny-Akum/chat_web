@@ -52,6 +52,7 @@
 <script>
 import { login, register } from '@/api/api'
 export default {
+    name:"login",
     data() {
         return {
             page: "login",

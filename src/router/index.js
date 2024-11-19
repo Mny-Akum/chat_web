@@ -10,7 +10,7 @@ const routes = [
     path:'/chat',
     name:'chat',
     component: ()=>import('@/view/Chat.vue')
-}
+},
 ]
 let router = new VueRouter({routes})
 export default router
