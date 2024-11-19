@@ -1,5 +1,7 @@
 # APP外包工坊聊天室项目:snowman:
 
+https://img.shields.io/badge/Mny_Akum-chat_web-success.svg https://img.shields.io/badge/Vue-72.5%-9cf.svg https://img.shields.io/badge/JavaScript-21.1%-orange.svg https://img.shields.io/badge/HTML-6.4%-red.svg
+
 > ## 前言
 >
 > 作为一个程序员，为什么不用自己的项目聊天呢？
@@ -18,29 +20,19 @@
 
 1. ​群组聊天
 2. 私人聊天
-
 3. 邮箱注册
-
 4. 精美的注册登录页面
-
 5. 精心制作的用户列表
-
 6. 仿QQ聊天
 
    1. 仿QQ聊天气泡
 
    2. 仿QQ聊天时间显示
-
 7. 精心制作且炫酷的输入框
-
 8. 精心制作且炫酷的消息提示
-
 9. 精心制作的个人主页
-
 10. 用户是否在线显示
-
 11. 自定义聊天头像(支持动图)
-
 12. 悬浮可拖动菜单
 
 ## 效果:notes:

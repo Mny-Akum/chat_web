@@ -2,7 +2,7 @@
   <div class="main">
     <div id="box">
       <div class="app">
-        <MyCat />
+        <!-- <MyCat /> -->
       </div>
       <el-main id="left">
         <div class="leftList">
@@ -269,11 +269,7 @@ export default {
     },
     //通过email获取头像
     getUserAvatar(email) {
-      let avatar = this.emailMap[email]?.avatar
-        ? this.emailMap[email].avatar
-        : "http://" +
-        this.ip +
-        "/chat/file/download/1/98859171c9c04d3897b1dc857185b738";
+      let avatar = this.emailMap[email]?.avatar ? this.emailMap[email].avatar : "http://" + this.ip + "/chat/file/download/1/98859171c9c04d3897b1dc857185b738";
       return avatar;
     },
     //通过email获取名字
@@ -439,12 +435,10 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  /* background-image: url('../assets/images/01.jpg'); */
 }
 
 #box {
-  /* background: linear-gradient(215deg, #fdaeae, #ffe6c6); */
-  background-image: url(../assets/images/mygo.jpg);
+  background-image: url(@/assets/images/mygo.jpg);
   background-position-x: 10vw;
   background-size: cover;
   display: flex;
@@ -538,67 +532,57 @@ ul {
 }
 
 #chatFooter {
-  // background: linear-gradient(
-  //   rgba(255, 255, 255, 0.3),
-  //   rgba(255, 255, 255, 0.7)
-  // );
-
-  padding: 1vmin --1vmin;
+  box-sizing: border-box;
+  height: 27vh;
+  padding: 0 1vh;
   background-color: #4ddff3;
-  border-radius: 5vmin;
-  font-size: 8vmin;
+  border-radius: 1vh;
+  font-size: 1rem;
   position: relative;
   overflow: hidden;
   z-index: 10;
-}
 
-#chatFooter::before {
-  content: "";
-  width: 200%;
-  height: 200%;
-  background-color: #4ff3ff;
-  position: absolute;
-  left: -50%;
-  top: -50%;
-  background-image: conic-gradient(transparent, #750ce5, transparent 50%);
-  z-index: -2;
-  animation: rotate 6s linear infinite;
-}
-
-@keyframes rotate {
-  to {
-    transform: rotate(360deg);
+  //动画
+  &::before {
+    content: "";
+    width: 200%;
+    height: 700%;
+    position: absolute;
+    left: -50%;
+    top: -300%;
+    background: conic-gradient(#c1fce5, #adffff, #f3cdff, #fbd786, #fbd786, #f3cdff, #adffff, #c1fce5);
+    z-index: -2;
+    animation: rotate 6s linear infinite;
   }
-}
 
-#chatFooter::after {
-  content: "";
-  position: absolute;
-  inset: 1vmin;
-  backdrop-filter: blur(1000rem);
-  background-image: url("https://tuchuang.voooe.cn/images/2024/11/18/mygo.jpg");
-  background-repeat: no-repeat;
-  background-position: 0vmin -520vmin;
-  background-size: cover;
-  border-radius: 4vmin;
-  z-index: -1;
+  //动画上的蒙版
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0.8vh;
+    backdrop-filter: blur(10rem);
+    background-image: url(@/assets/images/chat_area_bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-y: 65%;
+    border-radius: 1vh;
+    z-index: -1;
+  }
 }
 
 #areaMsg {
   color: black;
   box-sizing: border-box;
-  padding: 2rem;
-  height: 20vh;
+  padding: 1rem;
+  margin: 1vh 0 1vh;
+  height: 19vh;
   font-size: 2rem;
   width: 100%;
   resize: none;
-  border: 0rem;
+  word-break: break-all;
   background: transparent;
+  border: none;
   outline: none;
-
-  //解决输入框超出
-  border-radius: 3.5rem;
-  margin-top: 1.1rem;
 }
 
 #sendBtn {
@@ -606,13 +590,17 @@ ul {
   height: 3.2rem;
   padding: 0.8rem 2rem 0.9rem;
   font-size: 1.2rem;
-  margin-top: 0.5vh;
-  margin-right: 1.8rem;
+  margin-top: 1vh;
+  margin-right: 1vw;
   border: none;
   background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
   position: relative;
-  border-radius: 1vmin;
+  border-radius: 1vh;
   bottom: 1.5rem;
+
+  &.active {
+    transform: scale(0.95);
+  }
 }
 
 #chatBody {
@@ -684,8 +672,8 @@ ul {
   white-space: pre-wrap;
   /* 保留换行符 */
   word-wrap: break-word;
-  word-break: break-all;
   /* 防止长单词或URL破坏布局 */
+  word-break: break-all;
   font-size: 1.2rem;
   max-width: 80%;
   display: inline-block;
@@ -776,7 +764,8 @@ ul {
   }
 
   #chatBody:hover,
-  #left {
+  #left:hover,
+  #areaMsg {
     scrollbar-color: rgb(124, 213, 255) rgba(255, 136, 136, 0);
   }
 }
@@ -825,74 +814,9 @@ ul {
   }
 }
 
-@keyframes ani {
-  0% {
-    box-shadow: 0 0 0px hsl(0, 94%, 60%);
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
   }
-
-  25% {
-    box-shadow: 0 0 0.8rem #ff8329;
-  }
-
-  50% {
-    box-shadow: 0 0 1.6rem #a4b239ac;
-  }
-
-  75% {
-    box-shadow: 0 0 0.8rem #5bff29;
-  }
-
-  100% {
-    box-shadow: 0 0 0px #ff8329;
-  }
-}
-
-@keyframes hiteani {
-  0% {
-    box-shadow: 0 0 1.5rem hsl(0, 94%, 60%);
-  }
-
-  25% {
-    box-shadow: 0 0 2.5rem #ff8329;
-  }
-
-  50% {
-    box-shadow: 0 0 3.5rem #a4b239ac;
-  }
-
-  75% {
-    box-shadow: 0 0 2.5rem #5bff29;
-  }
-
-  100% {
-    box-shadow: 0 0 1.5rem #ff8329;
-  }
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.fa-chevron-down::before {
-  content: "\f078";
-}
-
-/* 按钮样式 */
-.animated-btn {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-  /* 缩放过渡效果 */
-}
-
-/* 点击时缩放效果 */
-.animated-btn:active {
-  transform: scale(0.95);
-  /* 点击时缩小 */
 }
 </style>
