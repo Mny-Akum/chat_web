@@ -12,6 +12,7 @@
     "axios": "^1.7.7",
     "core-js": "^3.8.3",
     "element-ui": "^2.15.14",
+    "font-awesome": "^4.7.0",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
     "live2d-widget": "^3.1.4",

@@ -18,7 +18,7 @@ export default {
   },
   mounted() {
     clickEffect.note()
-    this.$router.push("/user")
+    this.$router.push("/login")
   },
   methods: {
 
