@@ -2,9 +2,10 @@
   <div class="main">
     <div id="box">
       <div class="app">
-        <Transition name="fade">
-          <Levitation  width="200px" height="150px" :levitem="levitem" v-if="levitem.open"></Levitation>
-        </Transition>
+
+      <Transition name="fade">
+        <Levitation  width="200px" height="150px" :levItem="levItem" v-if="levItem.open"></Levitation>
+      </Transition>
       </div>
       <el-main id="left">
         <div class="leftList">
@@ -24,7 +25,7 @@
             'notLine' : !item.online}" 
             v-for="(item, index) in userlist" :key="index"
             @click="choiceUser(item)" v-show="userlistOpen"> 
-              <img :src="getUserAvatar(item.email)" class="avatarCss" :class="emailMap[item.email]?.messagePrompt?'avatarCss2':'avatarCss'" @mouseover="avatarlev($event,item)" @mouseleave="avatarout()">
+              <img :src="getUserAvatar(item.email)" class="avatarCss" :class="emailMap[item.email]?.messagePrompt?'avatarCss2':'avatarCss'" @mouseover="avatarLev($event,item)" @mouseleave="avatarOut()">
               {{ item.username }}
           </div>
         </div>
@@ -65,7 +66,6 @@
 </template>
 <script>
 let socket;
-import MyCat from '@/components/myCat/MyCat.vue';
 import Levitation from '@/components/Levitation';
 import { getUserList, getMessageList } from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
@@ -73,7 +73,6 @@ import { getRandomNum } from '@/utils/utils'
 export default {
   name: "chat",
   components: {
-    MyCat,
     ChatLoading,
     Levitation
   },
@@ -81,13 +80,13 @@ export default {
     return {
       userlistOpen:false,
       //个人主页定时器
-      levtime:"",
+      levTime:"",
       //个人主页数据
-      levitem:{
+      levItem:{
         open:false,
         left:"",
         top:"",
-        PersonalHomepage:{}
+        personalHomepage:{}
       },
       //群组
       groupHint: {
@@ -180,7 +179,6 @@ export default {
               this.addMessageList(data.to, data);
             } else {
               //用户列表消息提示
-              console.log(data);
               if (this.chatUser.email != data.from) {
                 this.$set(this.emailMap[data.from], "messagePrompt", true);
               }
@@ -435,20 +433,20 @@ export default {
       }
     },
 //获取头像位置
-    avatarlev(e,item){
+    avatarLev(e,item){
       item.avatar=this.getUserAvatar(item.email)
       let rect=e.target.getBoundingClientRect()
-      this.levitem.left=rect.right+3+'px'
-      this.levitem.top=rect.bottom-80+'px'
-      this.levitem.PersonalHomepage=item
-      this.levtime=setTimeout(() => {
-        this.levitem.open=true
-      }, 500);
+      this.levItem.left=rect.right+3+'px'
+      this.levItem.top=rect.bottom-80+'px'
+      this.levItem.personalHomepage=item
+      this.levTime = setTimeout(()=>{
+        this.levItem.open=true
+      },1000)
     },
     //头像移出
-    avatarout(){
-      this.levitem.open=false
-      clearTimeout(this.levtime)
+    avatarOut(){
+      this.levItem.open=false
+      clearTimeout(this.levTime)
     }
   }
 }
@@ -572,7 +570,7 @@ ul {
   overflow: hidden;
   z-index: 10;
   //动画
-  &::before{n
+  &::before{
     content: "";
     width: 200%;
     height: 700%;
@@ -777,18 +775,6 @@ ul {
     margin-top: 1.1rem;
   }
 }
-.fade-leave,   // 离开前,进入后透明度是1
-.fade-enter-to {
-  opacity: 1;
-}
-.fade-leave-active,
-.fade-enter-active {
-  transition: all 0.5s; //过度是2秒
-}
-.fade-leave-to,
-.fade-enter {
-  opacity: 0;
-}
 //滚动条
 @supports (scrollbar-color: auto) {
 
@@ -853,5 +839,19 @@ ul {
   to {
     transform: rotate(360deg);
   }
+}
+
+.fade-leave,   // 离开前,进入后透明度是1
+.fade-enter-to {
+  opacity: 1;
+}
+.fade-leave-active,
+.fade-enter-active {
+  animation-delay: 3s;
+  transition: all 0.5s; //过度是2秒
+}
+.fade-leave-to,
+.fade-enter {
+  opacity: 0;
 }
 </style>
