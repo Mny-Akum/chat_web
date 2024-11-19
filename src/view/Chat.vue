@@ -3,7 +3,7 @@
     <div id="box">
       <div class="app">
         <Transition name="fade">
-          <Levitation  width="200px" height="150px" :levitem="levitem" v-if="levitem.open"></Levitation>
+          <Levitation  width="20rem" height="15rem" :levitem="levitem" v-if="levitem.open"></Levitation>
         </Transition>
       </div>
       <el-main id="left">
@@ -439,7 +439,7 @@ export default {
       item.avatar=this.getUserAvatar(item.email)
       let rect=e.target.getBoundingClientRect()
       this.levitem.left=rect.right+3+'px'
-      this.levitem.top=rect.bottom-80+'px'
+      this.levitem.top=rect.bottom
       this.levitem.PersonalHomepage=item
       this.levtime=setTimeout(() => {
         this.levitem.open=true
@@ -572,7 +572,7 @@ ul {
   overflow: hidden;
   z-index: 10;
   //动画
-  &::before{n
+  &::before{
     content: "";
     width: 200%;
     height: 700%;

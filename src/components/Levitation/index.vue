@@ -1,14 +1,14 @@
 <template>
   <div :style="{ width, height, left: levitem?.left, top: levitem?.top, backgroundImage: `url(${encodeURI(PersonalHomepage.avatar)})` }"
-    class="all" :class="PersonalHomepage.online ? 'opencss' : 'outcss'">
+    class="all" :class="PersonalHomepage.online ? 'opencss' : 'outcss'" ref="alls">
     <div style="width: 100%; height: 100%;position: relative;box-sizing: border-box;">
       <img :src="PersonalHomepage.avatar" class="avatarCss">
       <div class="avatarCss avatarpian" :class="PersonalHomepage.online?'onspancss':''">
         <!-- 在线显示 -->
       </div>
       <div class="box1">
-        <span class="item" style="font-size: 20px;">{{ PersonalHomepage.username }}</span>
-        <span class="item" style="font-size: 10px;">{{ PersonalHomepage.online ? '在线' : '离线' }}</span>
+        <span class="item" style="font-size: 1.5rem;">{{ PersonalHomepage.username }}</span>
+        <span class="item" style="font-size: 1rem;">{{ PersonalHomepage.online ? '在线' : '离线' }}</span>
       </div>
       <div class="box">
       </div>
@@ -32,6 +32,8 @@ export default {
   },
   mounted() {
     // console.log(this.levitem.PersonalHomepage)
+    let suns=this.$refs.alls.offsetHeight/1.5
+    this.levitem.top=this.levitem.top- suns+'px'
     this.PersonalHomepage = this.levitem.PersonalHomepage
     if(this.PersonalHomepage.email=='shenmidadazaoan@qq.com'){
       this.$refs.nailong.src=require('@/components/Levitation/mp3/汪旭专属.mp3')
@@ -56,43 +58,43 @@ export default {
 }
 .onspancss{
   box-sizing: border-box;
-  border-bottom: 3px solid rgb(174, 210, 255);
+  border-bottom: 0.3rem solid rgb(174, 210, 255);
 }
 .avatarCss {
-  height: 80px;
-  width: 80px;
-  margin: 10px;
+  height: 8rem;
+  width: 8rem;
+  margin: 1rem;
   box-sizing: border-box;
   position: absolute;
   z-index: 2;
 }
 .avatarpian{
-  height: 82px;
-  width: 82px;
+  height: 8.2rem;
+  width: 8.2rem;
   box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
   background: linear-gradient(120deg, #77767688 0%, #f4f6f8b6 100%);
   backdrop-filter: blur(3rem);
   z-index: 1;
 }
 .box1 {
-  width: 100px;
-  height: 50px;
+  width: 10rem;
+  height: 5rem;
   float: right;
-  margin-top: 20px;
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
 }
 
 .item {
-  margin-top: 2px;
-  margin-left: 1px;
+  margin-top: 0.2rem;
+  margin-left: 0.2rem;
 }
 
 .box {
   width: 100%;
   position: absolute;
-  height: 200px;
-  top: 70px;
+  height: 18rem;
+  top: 7rem;
   background: linear-gradient(120deg, #e0c3fc88 0%, #8ec5fc88 100%);
   backdrop-filter: blur(0.3rem);
 }
