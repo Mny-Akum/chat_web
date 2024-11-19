@@ -9,9 +9,10 @@ module.exports = defineConfig({
     })
   },
   devServer:{
-    client: {
-      overlay: false
-    }
+    hot:true,
+    // client: {
+    //   overlay: false
+    // }
   //   open:true,
   //   host:'0.0.0.0',
   //   port:8000,
