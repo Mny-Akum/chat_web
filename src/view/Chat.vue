@@ -2,6 +2,9 @@
   <div class="main">
     <div id="box">
       <div class="app">
+        <Transition name="fade">
+          <Levitation  width="200px" height="150px" :levitem="levitem" v-if="levitem.open"></Levitation>
+        </Transition>
         <MyCat />
       </div>
       <el-main id="left">
@@ -20,8 +23,8 @@
             'isLine' : item.online,
             'notLine' : !item.online}" 
             v-for="(item, index) in userlist" :key="index"
-            @click="choiceUser(item)" v-show="userlistOpen" > 
-              <img :src="getUserAvatar(item.email)" class="avatarCss" :class="emailMap[item.email]?.messagePrompt?'avatarCss2':'avatarCss'">
+            @click="choiceUser(item)" v-show="userlistOpen"> 
+              <img :src="getUserAvatar(item.email)" class="avatarCss" :class="emailMap[item.email]?.messagePrompt?'avatarCss2':'avatarCss'" @mouseover="avatarlev($event,item)" @mouseleave="avatarout()">
               {{ item.username }}
           </div>
         </div>
@@ -62,7 +65,7 @@
 <script>
 let socket;
 import MyCat from '@/components/myCat/MyCat.vue';
-import Levitation from '@/components/Levitation.vue';
+import Levitation from '@/components/Levitation';
 import { getUserList, getMessageList } from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
 import { getRandomNum } from '@/utils/utils'
@@ -76,6 +79,15 @@ export default {
   data() {
     return {
       userlistOpen:false,
+      //个人主页定时器
+      levtime:"",
+      //个人主页数据
+      levitem:{
+        open:false,
+        left:"",
+        top:"",
+        PersonalHomepage:{}
+      },
       //群组
       groupHint:{
         num:0,
@@ -147,8 +159,6 @@ export default {
           console.log("websocket已打开");
         };
         socket.onmessage = (msg) => {
-          
-          console.log(this.emailMap)
           let data = JSON.parse(msg.data);
           if (data.type == "system") {
             this.getUserList(data.users)
@@ -232,7 +242,6 @@ export default {
       })
       getUserList()
         .then(res => {
-          console.log(this.userlist)
           let arr = res.data.data
           let map = {};
           arr.forEach((item) => {
@@ -240,12 +249,10 @@ export default {
             map[item.email] = {
               username: item.username,
               avatar: item.avatar,
-              levopen:false
             }
             item.online = onlineUser.has(item.email)
           })
           this.emailMap = map
-          console.log('map',map)
           this.userlist = arr
         }).catch(error => {
           localStorage.setItem("autoLogin", false);
@@ -392,7 +399,22 @@ export default {
       }
 
     },
-
+//获取头像位置
+    avatarlev(e,item){
+      item.avatar=this.getUserAvatar(item.email)
+      let rect=e.target.getBoundingClientRect()
+      this.levitem.left=rect.right+3+'px'
+      this.levitem.top=rect.bottom-80+'px'
+      this.levitem.PersonalHomepage=item
+      this.levtime=setTimeout(() => {
+        this.levitem.open=true
+      }, 500);
+    },
+    //头像移出
+    avatarout(){
+      this.levitem.open=false
+      clearTimeout(this.levtime)
+    }
   }
 }
 </script>
@@ -461,6 +483,7 @@ export default {
     width: calc(100% - 2rem);
     height: 4rem; 
     display: flex;
+
     line-height: 4rem;
   }
 
@@ -678,11 +701,17 @@ ul {
     margin-top: 1.1rem;
   }
 }
-
-
-#chatBody {
-
-
+.fade-leave,   // 离开前,进入后透明度是1
+.fade-enter-to {
+  opacity: 1;
+}
+.fade-leave-active,
+.fade-enter-active {
+  transition: all 0.5s; //过度是2秒
+}
+.fade-leave-to,
+.fade-enter {
+  opacity: 0;
 }
 //滚动条
 @supports (scrollbar-color: auto) {
