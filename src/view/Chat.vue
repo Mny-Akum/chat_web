@@ -3,14 +3,14 @@
     <div id="box">
       <div class="app">
         <Transition name="fade">
-          <Levitation  width="20rem" height="15rem" :levitem="levitem" v-if="levitem.open"></Levitation>
+          <Levitation  width="20rem" height="15rem" :levItem="levItem" v-if="levItem.open"></Levitation>
         </Transition>
       </div>
       <el-main id="left">
         <div class="leftList">
           <div class="userListStyle">群组聊天( 当前人数：{{ userCount }} )</div>
           <div class="leftItem" @click="choiceUser()" :class="{ currentCss: chatUser.email == 'group' }">
-            <div style="text-align: center; line-height: 4rem">群组聊天</div>
+            <div style="text-align: center; line-height: 4rem;white-space: nowrap">群组聊天</div>
           </div>
         </div>
 
@@ -24,8 +24,8 @@
             'notLine' : !item.online}" 
             v-for="(item, index) in userlist" :key="index"
             @click="choiceUser(item)" v-show="userlistOpen"> 
-              <img :src="getUserAvatar(item.email)" class="avatarCss" :class="emailMap[item.email]?.messagePrompt?'avatarCss2':'avatarCss'" @mouseover="avatarlev($event,item)" @mouseleave="avatarout()">
-              {{ item.username }}
+              <img :src="getUserAvatar(item.email)" class="avatarCss" :class="emailMap[item.email]?.messagePrompt?'avatarCss2':'avatarCss'" @mouseover="avatarLev($event,item)" @mouseleave="avatarOut()">
+              <span style="white-space: nowrap">{{ item.username }}</span>
           </div>
         </div>
       </el-main>
@@ -65,7 +65,6 @@
 </template>
 <script>
 let socket;
-import MyCat from '@/components/myCat/MyCat.vue';
 import Levitation from '@/components/Levitation';
 import { getUserList, getMessageList } from '@/api/api'
 import ChatLoading from '@/components/ChatLoading.vue';
@@ -73,7 +72,6 @@ import { getRandomNum } from '@/utils/utils'
 export default {
   name: "chat",
   components: {
-    MyCat,
     ChatLoading,
     Levitation
   },
@@ -81,13 +79,13 @@ export default {
     return {
       userlistOpen:false,
       //个人主页定时器
-      levtime:"",
+      levTime:"",
       //个人主页数据
-      levitem:{
+      levItem:{
         open:false,
         left:"",
         top:"",
-        PersonalHomepage:{}
+        personalHomepage:{}
       },
       //群组
       groupHint: {
@@ -180,7 +178,6 @@ export default {
               this.addMessageList(data.to, data);
             } else {
               //用户列表消息提示
-              console.log(data);
               if (this.chatUser.email != data.from) {
                 this.$set(this.emailMap[data.from], "messagePrompt", true);
               }
@@ -279,11 +276,7 @@ export default {
     },
     //通过email获取头像
     getUserAvatar(email) {
-      let avatar = this.emailMap[email]?.avatar
-        ? this.emailMap[email].avatar
-        : "http://" +
-        this.ip +
-        "/chat/file/download/1/98859171c9c04d3897b1dc857185b738";
+      let avatar = this.emailMap[email]?.avatar ? this.emailMap[email].avatar : "http://" + this.ip + "/chat/file/download/1/98859171c9c04d3897b1dc857185b738";
       return avatar;
     },
     //通过email获取名字
@@ -435,20 +428,20 @@ export default {
       }
     },
 //获取头像位置
-    avatarlev(e,item){
+    avatarLev(e,item){
       item.avatar=this.getUserAvatar(item.email)
       let rect=e.target.getBoundingClientRect()
-      this.levitem.left=rect.right+3+'px'
-      this.levitem.top=rect.bottom
-      this.levitem.PersonalHomepage=item
+      this.levItem.left=rect.right+3+'px'
+      this.levItem.top=rect.bottom
+      this.levItem.personalHomepage=item
       this.levtime=setTimeout(() => {
-        this.levitem.open=true
+        this.levItem.open=true
       }, 500);
     },
     //头像移出
-    avatarout(){
-      this.levitem.open=false
-      clearTimeout(this.levtime)
+    avatarOut(){
+      this.levItem.open=false
+      clearTimeout(this.levTime)
     }
   }
 }
@@ -571,18 +564,20 @@ ul {
   position: relative;
   overflow: hidden;
   z-index: 10;
+
   //动画
-  &::before{
+  &::before {
     content: "";
     width: 200%;
     height: 700%;
     position: absolute;
     left: -50%;
     top: -300%;
-    background: conic-gradient(#c1fce5,#adffff,#f3cdff,#fbd786,#fbd786,#f3cdff,#adffff,#c1fce5);
+    background: conic-gradient(#c1fce5, #adffff, #f3cdff, #fbd786, #fbd786, #f3cdff, #adffff, #c1fce5);
     z-index: -2;
     animation: rotate 6s linear infinite;
   }
+
   //动画上的蒙版
   &::after {
     content: "";
@@ -625,7 +620,8 @@ ul {
   position: relative;
   border-radius: 1vh;
   bottom: 1.5rem;
-  &.active{
+
+  &.active {
     transform: scale(0.95);
   }
 }
@@ -777,18 +773,6 @@ ul {
     margin-top: 1.1rem;
   }
 }
-.fade-leave,   // 离开前,进入后透明度是1
-.fade-enter-to {
-  opacity: 1;
-}
-.fade-leave-active,
-.fade-enter-active {
-  transition: all 0.5s; //过度是2秒
-}
-.fade-leave-to,
-.fade-enter {
-  opacity: 0;
-}
 //滚动条
 @supports (scrollbar-color: auto) {
 
@@ -849,9 +833,24 @@ ul {
     box-shadow: 0 0 1.5rem #ff8329;
   }
 }
+
 @keyframes rotate {
   to {
     transform: rotate(360deg);
   }
+}
+
+.fade-leave,   // 离开前,进入后透明度是1
+.fade-enter-to {
+  opacity: 1;
+}
+.fade-leave-active,
+.fade-enter-active {
+  animation-delay: 3s;
+  transition: all 0.5s; //过度是2秒
+}
+.fade-leave-to,
+.fade-enter {
+  opacity: 0;
 }
 </style>

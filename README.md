@@ -1,377 +1,92 @@
-# <<<<<<< HEAD
+# APP外包工坊聊天室项目:snowman:
 
-# chat_app
+https://img.shields.io/badge/Mny_Akum-chat_web-success.svg https://img.shields.io/badge/Vue-72.5%-9cf.svg https://img.shields.io/badge/JavaScript-21.1%-orange.svg https://img.shields.io/badge/HTML-6.4%-red.svg
 
-使用 vue 搭建一个聊天室
+> ## 前言
+>
+> 作为一个程序员，为什么不用自己的项目聊天呢？
+>
+> 以此作为动力我们花费了一些时间，修改了不少bug，克服了不少困难。
+>
+> 终于APP外包工坊聊天室项目终于落地，并基本可以正常使用。
 
-## Ⅰ Project setup
 
-```
-npm install
-```
 
-### Compiles and hot-reloads for development
+<img src="src/assets/images/readme01.png" style="width: 800px;" title="老东西还挺可爱"/>
 
-```
-npm run serve
-```
 
-### Compiles and minifies for production
 
-```
-npm run build
-```
+## 功能:cyclone:
 
-### Lints and fixes files
+1. ​群组聊天
+2. 私人聊天
+3. 邮箱注册
+4. 精美的注册登录页面
+5. 精心制作的用户列表
+6. 仿QQ聊天
 
-```
-npm run lint
-```
+   1. 仿QQ聊天气泡
 
-### Customize configuration
+   2. 仿QQ聊天时间显示
+7. 精心制作且炫酷的输入框
+8. 精心制作且炫酷的消息提示
+9. 精心制作的个人主页
+10. 用户是否在线显示
+11. 自定义聊天头像(支持动图)
+12. 悬浮可拖动菜单
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 效果:notes:
 
-## Ⅱ Table
+<img src="src\assets\images\readme02.png" style="width:800px;" title="114514">
 
-数据库表
+<img src="src\assets\images\readme03.png" style="width:800px;" title="v我50喵~">
 
-### table 1 用户表
+## 运行:zap:
 
-{
+- 确保您的电脑安装了node.js 经试验此服务可以在v14.18.2.版本下运行
 
-id    唯一序号
+- 确保你的电脑配置好了node.js的环境
 
-username 用户名
+*下载此项目后通过```npm run serve```*命令运行
 
-password 密码
+*填写ip之后请注册账号，然后登录使用*
 
-email 邮箱
+## 之后:fish:
 
-}
+*以后会实现的功能*
 
-### table 2 消息表
+- [ ] **个人主页**
+- [ ] **更好的聊天ui**
+- [ ] **优化代码(会改的)**
+- [x] **更好的移动端适配**
+- [x] **摸鱼**
 
-{
+## 温馨提示:two_hearts:
 
-id   唯一序号
+- 此项目仍在开发中如果发现bug是正常现象
+- **点点star喵~, 点点star谢谢喵~** :star2::+1:
 
-from_user 发送人
 
-to_user 接收人
 
-text   文本内容
+[![Star History Chart](https://api.star-history.com/svg?repos=LC044/WeChatMsg,chat_web/chat_web,Mny-Akum/chat_web&type=Date)](https://star-history.com/?utm_source=bestxtools.com#LC044/WeChatMsg&chat_web/chat_web&Mny-Akum/chat_web&Date)
 
-time   发送时间
+## 贡献者:sparkling_heart:
 
----
+**致以在座的各位崇高的敬意**
 
-type 类型 (系统消息 0,群组消息 1,个人消息 2)
+<a href="https://github.com/Mny-Akum/chat_web/graphs/contributors">
 
-showTime 是否显示时间
+<img src="https://contrib.rocks/image?repo=Mny-Akum/chat_web"></a>
 
-}
 
-## Ⅲ WebSocketServer
 
-type:system     服务端消息通知
+## 联系我们:telephone:
 
-type:user         客户端消息
+**如果发现bug想要反馈，亦或者想要参与开发，还是想提出建议，请咨询会长联系我们**
 
-#### 1.用户连接
 
-连接成功后服务端会向所有客户端发送一条连接消息，显示当前在线总人数和人员列表
-{
-"type":"system",
-"count":2,
-"users":[{"username":"114514@qq.com"},{"username":"1919810@qq.com"}]
-}
 
-### 2.用户断联
+## License:notebook:
 
-断开连接和连接时的状况一样，都会发送相同格式的消息
+Copyright © 2023-2024 by chat_web.
 
-### 3.发送消息
-
-分为两种，一种是群组消息，另一种是个人消息
-
-#### 个人消息
-
-发送：
-
-```json
-{
-  "to": "114514@qq.com",
-  "text": "hello",
-  "type": "single"
-}
-```
-
-接收：
-
-```json
-{
-  "showTime": true,
-  "type": "single",
-  "from": "114514@qq.com",
-  "to": "1919810@qq.com",
-  "time": "2024-11-05 10:39",
-  "message": "hello"
-}
-```
-
-#### 群组消息
-
-发送：
-
-```json
-{
-  "type": "group",
-  "to": "group",
-  "message": "hello"
-}
-```
-
-接收：
-
-```json
-{
-  "showTime": true,
-  "type": "group",
-  "from": "114514@qq.com",
-  "to": "group",
-  "time": "2024-11-05 10:39",
-  "message": "hello"
-}
-```
-
-## Ⅳ UserServer
-
-http://172.18.4.118:8080/chat/user
-
-### 1.注册功能
-
-/register    post 请求
-
-参数：json 类型
-
-| 参数名称 | 类型   | 事项         |
-| -------- | ------ | ------------ |
-| email    | String | 进行正则验证 |
-| username | String | 20 位以内    |
-| password | String | 20 位以内    |
-
-```json
-{
-  "username": "张三",
-  "email": "114514@qq.com",
-  "password": "1919810"
-}
-```
-
-返回值：Object
-
-| 参数名称 | 类型   | 事项               |
-| -------- | ------ | ------------------ |
-| code     | int    | 0 为失败，1 为成功 |
-| msg      | String | 返回注册账号的结果 |
-| data     | Object | 值为 null          |
-
-```json
-{
-    "code": 0,
-    "msg": "注册失败，用户已存在",
-    "data": null
-}
-
-{
-    "code": 1,
-    "msg": "success",
-    "data": "注册成功"
-}
-```
-
-### 2.登录
-
-/login    post 请求
-
-参数：json 类型
-
-| 参数名称 | 类型   | 事项 |
-| -------- | ------ | ---- |
-| email    | String |      |
-| password | String |      |
-
-```json
-{
-  "email": "114514@qq.com",
-  "password": "1919810"
-}
-```
-
-返回值：
-
-| 参数名称 | 类型   | 事项               |
-| -------- | ------ | ------------------ |
-| code     | int    | 0 为失败，1 为成功 |
-| msg      | String | 登录是否成功       |
-| data     | Object |                    |
-
-```json
-{
-    "code": 1,
-    "msg": "success",
-    "data": "登录成功"
-}
-
-{
-    "code": 0,
-    "msg": "登录失败,用户不存在或密码错误",
-    "data": null
-}
-```
-
-### 3.查询用户列表
-
-/list    get 请求
-
-| 参数名称 | 类型 | 事项 |
-| -------- | ---- | ---- |
-| 无       | 无   | 无   |
-
-返回值：Object
-
-| 参数名称 | 类型   | 事项 |
-| -------- | ------ | ---- |
-| code     | int    |      |
-| msg      | String |      |
-| data     | Array  | 列表 |
-
-    {
-        "code": 1,
-        "msg": "success",
-        "data": [
-            {
-                "id": 5,
-                "username": "张三",
-                "email": "1145141919810@qq.com",
-                "password": null
-            }
-        ]
-    }
-
-### 4.更改名称
-
-/rename    put 请求
-
-参数：json 类型
-
-| 参数名称 | 类型   | 事项 |
-| -------- | ------ | ---- |
-| email    | String |      |
-| username | String |      |
-
-```json
-{
-  "email": "114514@qq.com",
-  "username": "绫地宁宁"
-}
-```
-
-返回值：Object
-
-| 参数名称 | 类型   | 事项 |
-| -------- | ------ | ---- |
-| code     | int    |      |
-| msg      | String |      |
-| data     | String |      |
-
-```json
-{
-    "code": 1,
-    "msg": "success",
-    "data": "更改成功"
-}
-
-{
-    "code": 0,
-    "msg": "更改失败，用户不存在",
-    "data": null
-}
-```
-
-### 5.更改密码
-
-/repsd    put 请求
-
-参数：json 类型
-
-| 参数名称 | 类型   | 事项 |
-| -------- | ------ | ---- |
-| email    | String |      |
-| password | String |      |
-
-```json
-{
-  "email": "114514@qq.com",
-  "password": "1919810"
-}
-```
-
-返回值：object
-
-| 参数名称 | 参数类型 | 事项 |
-| -------- | -------- | ---- |
-| code     | int      |      |
-| msg      | String   |      |
-| data     | Object   |      |
-
-```json
-{
-    "code": 1,
-    "msg": "success",
-    "data": "更改成功"
-}
-
-{
-    "code": 0,
-    "msg": "更改失败，用户不存在",
-    "data": null
-}
-```
-
-## Ⅴ fileUploader
-
-思路：本地上传文件=>后端接收文件，显示上传条=>上传完毕后生成下载框=>在页面显示文件列表
-
-在上传的同时返回文件表映射
-
-进度条 websocket=>{
-
-localStore:"",("uuid")
-
-percent:"",
-
-type:"upload/download"
-
-}
-
-文件表映射=>{
-
-fileSize:""
-
-fileName:""
-
-uploadTime:""
-
-type:"" (1:image,2:file)
-
-uuid:"" (生成 uuid 存储)
-
-from:""
-
-to:""
-
-}
-
-增，删，查
