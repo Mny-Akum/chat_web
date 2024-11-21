@@ -3,9 +3,9 @@
     <div id="box">
       <div class="app">
 
-      <Transition name="fade">
-        <Levitation  width="200px" height="150px" :levItem="levItem" v-if="levItem.open"></Levitation>
-      </Transition>
+        <Transition name="fade">
+          <Levitation width="200px" height="150px" :levItem="levItem" v-if="levItem.open"></Levitation>
+        </Transition>
       </div>
       <el-main id="left">
         <div class="leftList">
@@ -15,18 +15,20 @@
           </div>
         </div>
 
-        <div class="leftList">
+        <div class="leftList"> n
           <div class="userListStyle" @click="userlistOpen = !userlistOpen">
             用户列表
           </div>
           <div class="leftItem" :class="{
-            'currentCss':chatUser.email==item.email,
-            'isLine' : item.online,
-            'notLine' : !item.online}" 
-            v-for="(item, index) in userlist" :key="index"
-            @click="choiceUser(item)" v-show="userlistOpen"> 
-              <img :src="getUserAvatar(item.email)" class="avatarCss" :class="emailMap[item.email]?.messagePrompt?'avatarCss2':'avatarCss'" @mouseover="avatarLev($event,item)" @mouseleave="avatarOut()">
-              {{ item.username }}
+            'currentCss': chatUser.email == item.email,
+            'isLine': item.online,
+            'notLine': !item.online
+          }" v-for="(item, index) in userlist" :key="index" @click="choiceUser(item)"
+            v-show="userlistOpen">
+            <img :src="getUserAvatar(item.email)" class="avatarCss"
+              :class="emailMap[item.email]?.messagePrompt ? 'avatarCss2' : 'avatarCss'" @mouseover="avatarLev($event, item)"
+              @mouseleave="avatarOut()">
+            {{ item.username }}
           </div>
         </div>
       </el-main>
@@ -78,15 +80,15 @@ export default {
   },
   data() {
     return {
-      userlistOpen:false,
+      userlistOpen: false,
       //个人主页定时器
-      levTime:"",
+      levTime: "",
       //个人主页数据
-      levItem:{
-        open:false,
-        left:"",
-        top:"",
-        personalHomepage:{}
+      levItem: {
+        open: false,
+        left: "",
+        top: "",
+        personalHomepage: {}
       },
       //群组
       groupHint: {
@@ -428,20 +430,20 @@ export default {
         });
       }
     },
-//获取头像位置
-    avatarLev(e,item){
-      item.avatar=this.getUserAvatar(item.email)
-      let rect=e.target.getBoundingClientRect()
-      this.levItem.left=rect.right+3+'px'
-      this.levItem.top=rect.bottom-80+'px'
-      this.levItem.personalHomepage=item
-      this.levTime = setTimeout(()=>{
-        this.levItem.open=true
-      },1000)
+    //获取头像位置
+    avatarLev(e, item) {
+      item.avatar = this.getUserAvatar(item.email)
+      let rect = e.target.getBoundingClientRect()
+      this.levItem.left = rect.right + 3 + 'px'
+      this.levItem.top = rect.bottom - 80 + 'px'
+      this.levItem.personalHomepage = item
+      this.levTime = setTimeout(() => {
+        this.levItem.open = true
+      }, 1000)
     },
     //头像移出
-    avatarOut(){
-      this.levItem.open=false
+    avatarOut() {
+      this.levItem.open = false
       clearTimeout(this.levTime)
     }
   }
@@ -774,6 +776,7 @@ ul {
     margin-top: 1.1rem;
   }
 }
+
 //滚动条
 @supports (scrollbar-color: auto) {
 
@@ -841,15 +844,18 @@ ul {
   }
 }
 
-.fade-leave,   // 离开前,进入后透明度是1
+.fade-leave,
+// 离开前,进入后透明度是1
 .fade-enter-to {
   opacity: 1;
 }
+
 .fade-leave-active,
 .fade-enter-active {
   animation-delay: 3s;
   transition: all 0.5s; //过度是2秒
 }
+
 .fade-leave-to,
 .fade-enter {
   opacity: 0;
