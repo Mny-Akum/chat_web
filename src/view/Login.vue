@@ -16,9 +16,9 @@
                         <input class="acc" type="password" v-model="password" placeholder="密码" maxlength="20">
                         <div class="switches">
                             <el-switch v-model="isSave" inactive-color="#e0c3fc" active-color="#8ec5fc"
-                                active-text="记住密码" />
+                                active-text="记住密码" class="switchStyle" />
                             <el-switch v-model="autoLogin" inactive-color="#e0c3fc" active-color="#8ec5fc"
-                                active-text="自动登录" />
+                                active-text="自动登录" class="switchStyle" />
                         </div>
                         <button class="submit" style="margin: 3rem auto 0;" @click="chatLogin">登录账号</button>
                     </div>
@@ -50,8 +50,9 @@
     </div>
 </template>
 <script>
-import {login,register} from '@/api/api'
+import { login, register } from '@/api/api'
 export default {
+    name:"login",
     data() {
         return {
             page: "login",
@@ -97,9 +98,9 @@ export default {
             this.password = ""
             this.page = mode
             let switchBtnArr = document.getElementsByClassName("el-switch__label");
-            this.$nextTick(()=>{
-                switchBtnArr[0].style.color = this.isSave ? "#4fa7ff":"#d2a8fa"
-                switchBtnArr[1].style.color = this.autoLogin ? "#4fa7ff":"#d2a8fa"
+            this.$nextTick(() => {
+                switchBtnArr[0].style.color = this.isSave ? "#4fa7ff" : "#d2a8fa"
+                switchBtnArr[1].style.color = this.autoLogin ? "#4fa7ff" : "#d2a8fa"
             })
         },
         chatLogin() {
@@ -120,10 +121,10 @@ export default {
                         //获取token，进行登录
                         let token = data.data;
                         this.$axios.defaults.headers.common['token'] = token
-                        localStorage.setItem("token",token)
+                        localStorage.setItem("token", token)
                         this.$router.push({
                             name: "chat",
-                            params: {email: this.email},
+                            params: { email: this.email },
                         });
                     } else {
                         this.$message({ type: "error", message: data.msg })
@@ -178,7 +179,7 @@ export default {
         //初始化操作
         init() {
             document.title = "欢迎来到App外包工坊"
-            document.documentElement.style.fontSize = document.documentElement.clientHeight / 1080 * 13 + 'px'
+            document.documentElement.style.fontSize = document.documentElement.clientHeight / 957 * 12 + 'px'
             this.ip = (this.ip ? this.ip : localStorage.getItem('ip'))
             localStorage.setItem('ip', this.ip)
             this.$axios.defaults.baseURL = 'http://' + this.ip
@@ -195,7 +196,7 @@ export default {
                 this.password = user.password
             }
             if (this.autoLogin) {
-                this.login()
+                this.chatLogin()
             }
         }
     },
@@ -229,7 +230,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 * {
     margin: 0;
     padding: 0;

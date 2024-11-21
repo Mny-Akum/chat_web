@@ -8,10 +8,14 @@ module.exports = defineConfig({
       return args;
     })
   },
-  // devServer:{
+  devServer:{
+    hot:true,
+    // client: {
+    //   overlay: false
+    // }
   //   open:true,
   //   host:'0.0.0.0',
   //   port:8000,
   //   https:true
-  // }
+  }
 })
