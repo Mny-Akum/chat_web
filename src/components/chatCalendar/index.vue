@@ -153,7 +153,7 @@ body {
 
 .calendar td {
     width: 4rem;
-    height: 4rem;
+    height: 4.2rem;
     border-radius: 50%;
     text-align: center;
     font: 600 1.2rem '';

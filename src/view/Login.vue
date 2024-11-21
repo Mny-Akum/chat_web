@@ -82,8 +82,9 @@ export default {
                     message: '你的ip是: ' + value,
                 });
                 this.ip = value
-                localStorage.setItem("ip", value)
+                //设置ip
                 this.$axios.defaults.baseURL = 'http://' + this.ip
+                localStorage.setItem("ip", value)
             }).catch(() => {
                 this.$message({
                     type: 'info',
@@ -122,6 +123,12 @@ export default {
                         let token = data.data;
                         this.$axios.defaults.headers.common['token'] = token
                         localStorage.setItem("token", token)
+                        //进行全局储存
+                        this.$chat.vuex('token',token)
+                        this.$chat.vuex('ip',this.ip)
+                        this.$chat.vuex('email',this.email)
+                        this.$chat.vuex('password',this.password)
+                        //跳转
                         this.$router.push({
                             name: "chat",
                             params: { email: this.email },
@@ -179,8 +186,8 @@ export default {
         //初始化操作
         init() {
             document.title = "欢迎来到App外包工坊"
-            document.documentElement.style.fontSize = document.documentElement.clientHeight / 957 * 12 + 'px'
-            this.ip = (this.ip ? this.ip : localStorage.getItem('ip'))
+            //进行Ip存储
+            this.ip = (localStorage.getItem('ip') ? localStorage.getItem('ip') : this.$chatStoreKey)
             localStorage.setItem('ip', this.ip)
             this.$axios.defaults.baseURL = 'http://' + this.ip
         },

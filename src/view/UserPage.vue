@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="userPage">
     <!-- 个人封面 -->
     <Live2d/>
     <div class="bg">
@@ -15,19 +15,23 @@
                         <span>上传封面图片</span>
                     </label>
                     <!-- 隐藏的文件上传控件 -->
-                    <input type="file" id="cover-upload" style="display: none;" accept="image/*" />
+                    <input type="file" id="cover-upload" style="display: none;" accept="image/*"/>
                 </div>
                 <div class="fixed-frame">
                     <!-- 左侧的圆形头像框 -->
-                    <div class="profile-circle" onclick="document.getElementById('fileInput').click();">
-                        <span>更换头像</span>
+                    <div class="profile-circle" onclick="document.getElementById('fileInput').click()">
+                        <img class="avatar" :src="getAvatar"/>
+                        <div class="changeAvatar">更换头像</div>
                     </div>
                     <!-- 隐藏的文件选择器 -->
-                    <input type="file" id="fileInput" class="file-input" accept="image/*" onchange="handleFileChange(event)">
+                    <input type="file" id="fileInput" class="file-input" accept="image/*" multiple @change="updateAvatar"/>
+                </div>
+                <div class="info_content">
+                    <div>我喜欢你</div>
                 </div>
             </div>
             <!-- 第一页下面功能区 -->
-            <div style="display:flex;justify-content: space-between;">
+            <div class="funBlock">
                 <!-- 左边功能列表 -->
                 <div class="toolCabinet">
                 <!-- SignIn -->
@@ -49,9 +53,10 @@
                         </div>
                     </div>
                     <MusicPlayer/>
-                    <Barrage/>
+                    <Barrage documentId="userPage"/>
                 </div>
                 <!-- 右边功能 -->
+                <DisplayCase/>
                 <ChatCalendar style="margin-top:2rem;"/>
             </div>
         </div>
@@ -80,20 +85,63 @@
 </template>
 
 <script>
-import Live2d from "@/components/live2d/Live2d.vue"
-import MusicPlayer from "@/components/music/MusicPlayer.vue"
-import ChatCalendar from '@/components/chatCalendar/ChatCalendar.vue'
-import Barrage from '@/components/barrage/Barrage.vue'
+import Live2d from "@/components/Live2d"
+import MusicPlayer from "@/components/MusicPlayer"
+import ChatCalendar from '@/components/ChatCalendar'
+import Barrage from '@/components/Barrage'
+import DisplayCase from "@/components/DisplayCase"
+import {getUserInfo,uploadImage,changeAvatar} from "@/api/api"
+import {uploadFile,imageToBase64} from "@/utils/utils"
 export default {
     name:"UserPage",
     data(){
         return {
-            
+            userInfo:"",
+            ip:""
         }
     },
-    components:{MusicPlayer,Live2d,ChatCalendar,Barrage},
+    components:{MusicPlayer,Live2d,ChatCalendar,Barrage,DisplayCase},
     mounted(){
-        document.documentElement.style.fontSize = document.documentElement.clientHeight / 957 * 12 + 'px'
+        this.init()
+    },
+    methods:{
+        //初始化方法
+        init(){
+            document.title = "个人主页"
+            this.ip = this.$store.state.ip;
+            this.getUserInfo()
+        },
+        //获取个人信息
+        getUserInfo(){
+            let email = this.$store.state.email
+            getUserInfo(email).then(res=>{
+                this.userInfo = res.data.data
+            })
+        },
+        //上传图片
+        updateAvatar(e){
+            uploadFile(e).then(files=>{
+                let file = files[0]
+                uploadImage(file).then(res=>{
+                    let uuid = res.data.data.uuid
+                    this.userInfo.avatar = uuid
+                    changeAvatar({
+                        email:this.userInfo.email,
+                        avatar:uuid
+                    }).then(res=>{
+                        if(res.data.code == 1){
+                            this.$message({type:"success",message:"更改成功"})
+                        }
+                    })
+                })
+            })
+        }
+    },
+    computed:{
+        getAvatar(){
+            console.log(this.userInfo)
+            return this.userInfo.avatar ? `http://${this.ip}/chat/download/2/${this.userInfo.avatar}` : `http://${this.ip}/chat/download/1/98859171c9c04d3897b1dc857185b738`
+        }
     }
 }
 </script>
@@ -107,6 +155,8 @@ export default {
 #page1,#page2{
     height: 100vh;
     overflow: hidden;
+}
+#page2{
     padding-left:15vw;
     padding-right: 14vw;
 }
@@ -119,12 +169,7 @@ export default {
     background-size: cover;
     background-attachment: fixed;
 }
-.toolCabinet{
-    height: 53.25rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
+
 .user-cover {
     position: absolute;
     top: 1.6rem;
@@ -156,7 +201,7 @@ export default {
 }
 
 .banner {
-    width: 70vw;
+    width: 115.5rem;
     height: 26.5rem;
     background-image: linear-gradient(to right top, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.9));
     /* backdrop-filter: blur(5px); */
@@ -182,21 +227,31 @@ export default {
             backdrop-filter: blur(3rem);
             border-radius: 50%;
             position: relative;
-            display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             cursor: pointer;
             margin-top: 18.5rem;
             margin-left: 2rem;
+            .avatar{
+                position: absolute;
+                width: inherit;
+                height: inherit;
+                z-index: -1;
+                
+            }
             // 隐藏的文字
-            span {
+            .changeAvatar {
+                height: 8rem;
+                line-height: 8rem;
+                text-align: center;
+                backdrop-filter: blur(0.5rem);
                 color: white;
                 font-size: 1.2rem;
                 display: none;
             }
             /* 悬停显示文字 */
-            &:hover span {
+            &:hover .changeAvatar {
                 display: block;
             }
         }
@@ -205,7 +260,24 @@ export default {
             display: none;
         }
     }
+    .info_content{
+        height: 7.5rem;
+    }
 }
+//功能区样式
+.funBlock{
+    display:flex;
+    justify-content: space-between;
+    width:115.5rem;
+    margin:0 auto;
+    .toolCabinet{
+        height: 53.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+}
+
 .signIn{
     .login{
         backdrop-filter: blur(2rem);

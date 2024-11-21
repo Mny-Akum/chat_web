@@ -3,26 +3,61 @@
         <div class="input-container">
             <div id="InputAlice">
                 <img src="./img/alxwxt.png"  alt="">
-                <input type="text" class="danmuInput" placeholder="输入弹幕">
+                <input type="text" class="danmuInput" placeholder="输入弹幕，最多20个字" v-model="barrageText" v-on:keyup.enter="sendBarrage"  maxlength="20">
             </div>
             <div id="Elysia">
-                <input type="image" :src="require('./img/Elysia.jpg')" class="sendBtn"  style="color: #FFE791;" />
-                <div class="btnText">发送</div>
+                <input type="image" :src="require('./img/Elysia.jpg')" class="sendBtn"  style="color: #FFE791;" @click="sendBarrage" />
+                <div class="btnText" >发送</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import {getRandomNum} from '@/utils/utils'
 export default {
     name:"barrage",
+    props:["documentId"],
     data(){
-        return{}
+        return{
+            barrageText:"",
+            audioList:[
+                require("@/assets/audio/bbkb.mp3"),
+                require("@/assets/audio/omg.mp3"),
+                require("@/assets/audio/ss.mp3")
+            ],
+            barrageList:[]
+        }
+    },
+    watch:{
+    },
+    methods:{
+        playRandomAudio(){
+            const audio = this.audioList[getRandomNum(0,this.audioList.length-1)]
+            new Audio(audio).play();
+        },
+        sendBarrage(){
+            this.addBarrage();
+            this.barrageText = ""
+            this.playRandomAudio()
+        },
+        addBarrage(){
+            const container = document.getElementById(this.documentId)
+            const barrage = document.createElement('div');
+            barrage.classList.add('barrageItem');
+            barrage.textContent = this.barrageText;
+            // 随机颜色
+            const randomColor = `#${getRandomNum(0,1677215).toString(16).padStart(6,'0')}`
+            barrage.style.color = randomColor;
+            // 随机位置
+            barrage.style.top = `${getRandomNum(0,100)}%`
+            container.appendChild(barrage)
+        }
     }
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 #barrage{
     position: relative;
     width: 36rem;
@@ -86,20 +121,20 @@ export default {
 
 
 
-.danmu-container {
+.barrageItem-container {
     width: 100%;
 }
 
-.danmu {
-    position: absolute;
+.barrageItem {
+    position: fixed;
     top: -500px;
     white-space: nowrap;
-    font-size: 23px;
-    animation: danmuMove 10s linear infinite;
+    font-size: 1.5rem;
+    animation: barrage_move 10s linear infinite;
     z-index: 100;
 }
 
-@keyframes danmuMove {
+@keyframes barrage_move {
 
     from {
         transform: translateX(4000%);
@@ -111,41 +146,4 @@ export default {
 
 }
 
-
-label,
-textarea {
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-} 
-
-#story {
-    position: relative;
-    width: 100%; /* 根据需要调整宽度 */
-    height: 150px; /* 根据需要调整高度 */
-    background: url('./img/Lion.png') no-repeat right bottom; /* 图片放置在右下角 */
-    backdrop-filter: blur(5px);
-    background-size: 150px 100px; /* 调整图片大小 */
-    padding: 10px; /* 确保文字不覆盖图片 */
-    resize: none; /* 可选：禁止用户调整文本域大小 */
-}
-
-textarea {
-    padding: 10px;
-    max-width: 100%;
-    line-height: 1.5;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    box-shadow: 1px 1px 1px #999;
-}
-
-label {
-    display: block;
-    margin-bottom: 10px;
-}
-
-.text {
-    position: absolute;
-    left: 100px;
-    top: 320px;
-}
 </style>

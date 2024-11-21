@@ -2,9 +2,7 @@
   <div class="main">
     <div id="box">
       <div class="app">
-        <Transition name="fade">
-          <Levitation  width="20rem" height="15rem" :levItem="levItem" v-if="levItem.open"></Levitation>
-        </Transition>
+      <Levitation  width="20rem" height="15rem" :levItem="levItem" v-if="levItem.open"></Levitation>
       </div>
       <el-main id="left">
         <div class="leftList">
@@ -77,34 +75,31 @@ export default {
   },
   data() {
     return {
-      userlistOpen:false,
-      //个人主页定时器
-      levTime:"",
-      //个人主页数据
-      levItem:{
+      socket:null,            //socket连接
+      //群组
+      userlistOpen:false,   //用户列表是否打开
+      groupHint: {          //群组消息提醒
+        num: 0,
+        messagePrompt: false,
+      },
+      sendMessage: "",      //发送消息
+      chatUser: {},         //当前发送用户
+      userlist: [],         //用户列表
+      emailMap: {},         //邮箱=>用户信息映射列表
+      messageList: {        //消息列表
+        isLoading: false,
+        page: {},
+      },
+      username: "",         //用户名
+      userCount: 0,         //在线数量
+      justTime: {},         //是否显示时间
+      levTime:"",           //个人主页定时器
+      levItem:{             //个人主页数据
         open:false,
         left:"",
         top:"",
         personalHomepage:{}
       },
-      //群组
-      groupHint: {
-        num: 0,
-        messagePrompt: false,
-      },
-      ip: "",
-      sendMessage: "",
-      chatUser: {},
-      userlist: [],
-      emailMap: {},
-      messageList: {
-        isLoading: false,
-        page: {},
-      },
-      username: "",
-      isCollapse: false,
-      userCount: 0,
-      justTime: {},
     };
   },
   watch: {
@@ -126,11 +121,14 @@ export default {
   },
   mounted() {
     document.title = "聊天室";
-    this.username = this.$route.params.email;
+    this.username = this.$store.state.email;
+    //添加监听事件
     this.$refs.chatBody.$el.addEventListener("scroll", this.messageLazyLoad);
-    this.ip = localStorage.getItem("ip");
     this.chatUser = { username: "群组聊天", email: "group", type: "group" };
     this.init();
+  },
+  destroyed(){
+    this.socket.close()
   },
   computed: {},
   methods: {
@@ -145,23 +143,15 @@ export default {
      */
     init() {
       if (typeof WebSocket == "undefined") {
-        console.log("您的浏览器不支持WebSocket");
       } else {
-        console.log("您的浏览器支持WebSocket");
-        let socketUrl =
-          "ws://" +
-          this.ip +
-          "/chat/server/" +
-          this.username +
-          "?token=" +
-          localStorage.getItem("token");
+        let socketUrl = "ws://" + this.$store.state.ip + "/chat/server/" + this.username + "?token=" + localStorage.getItem("token");
         if (socket != null) {
           socket.close();
           socket = null;
         }
         socket = new WebSocket(socketUrl);
+        this.socket = socket
         socket.onopen = function () {
-          console.log("websocket已打开");
         };
         socket.onmessage = (msg) => {
           let data = JSON.parse(msg.data);
@@ -181,14 +171,15 @@ export default {
               if (this.chatUser.email != data.from) {
                 this.$set(this.emailMap[data.from], "messagePrompt", true);
               }
+              //添加消息到消息列表中
               this.addMessageList(data.from, data);
             }
           }
         };
         //关闭事件
-        socket.onclose = function () { };
+        socket.onclose = function(){};
         //发生了错误事件
-        socket.onerror = function () { };
+        socket.onerror = function(){};
       }
     },
     //发送消息
@@ -224,12 +215,7 @@ export default {
         let showTime = this.showTime(to);
         socket.send(JSON.stringify(message));
         let h = new Date();
-        let time = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(
-          2,
-          0
-        )}-${String(h.getDate()).padStart(2, 0)} ${String(
-          h.getHours()
-        ).padStart(2, 0)}:${String(h.getMinutes()).padStart(2, 0)}`;
+        let time = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2,0)}-${String(h.getDate()).padStart(2, 0)} ${String(h.getHours()).padStart(2, 0)}:${String(h.getMinutes()).padStart(2, 0)}`;
         let send_data = {
           from: this.username,
           to,
@@ -276,7 +262,7 @@ export default {
     },
     //通过email获取头像
     getUserAvatar(email) {
-      let avatar = this.emailMap[email]?.avatar ? this.emailMap[email].avatar : "http://" + this.ip + "/chat/file/download/1/98859171c9c04d3897b1dc857185b738";
+      let avatar = this.emailMap[email]?.avatar ? `http://${this.$store.state.ip}/chat/download/2/${this.emailMap[email].avatar}` : "http://" + this.$store.state.ip + "/chat/download/1/98859171c9c04d3897b1dc857185b738";
       return avatar;
     },
     //通过email获取名字
@@ -311,6 +297,7 @@ export default {
     },
     //将消息添加到对象列表中
     addMessageList(key, value, desc) {
+      //统计消息数量，用来查询列表
       if (!this.messageList.page[key]) {
         this.messageList.page[key] = { count: 1, isMore: true };
       }
@@ -434,7 +421,7 @@ export default {
       this.levItem.left=rect.right+3+'px'
       this.levItem.top=rect.bottom
       this.levItem.personalHomepage=item
-      this.levtime=setTimeout(() => {
+      this.levTime=setTimeout(() => {
         this.levItem.open=true
       }, 500);
     },
@@ -840,17 +827,4 @@ ul {
   }
 }
 
-.fade-leave,   // 离开前,进入后透明度是1
-.fade-enter-to {
-  opacity: 1;
-}
-.fade-leave-active,
-.fade-enter-active {
-  animation-delay: 3s;
-  transition: all 0.5s; //过度是2秒
-}
-.fade-leave-to,
-.fade-enter {
-  opacity: 0;
-}
 </style>

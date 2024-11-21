@@ -12,11 +12,11 @@
         </div>
       </div>
       <div class="m-description-content">
-        <article>
+        <article :class="{ anim: isSwitching }">
           <p class="m-title">{{ currentSong.title }}</p>
           <p class="m-author">{{ currentSong.author }}</p>
         </article>
-    <!-- 播放按钮 -->
+        <!-- 播放按钮 -->
         <div class="m-btn-box">
           <button @click="previous">
             <svg class="icon" aria-hidden="true" style="transform: scale(-1)">

@@ -6,7 +6,7 @@
 </template>
 <script>
 import clickEffect from "@/utils/clickEffect"
-import MyCat from '@/components/myCat/MyCat.vue'
+import MyCat from '@/components/MyCat'
 export default {
   data() {
     return {
@@ -17,6 +17,7 @@ export default {
     MyCat
   },
   mounted() {
+    document.documentElement.style.fontSize = document.documentElement.clientHeight / 957 * 12 + 'px'
     clickEffect.note()
     this.$router.push("/login")
   },
